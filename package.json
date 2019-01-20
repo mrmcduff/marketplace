@@ -1,0 +1,28 @@
+{
+  "name": "marketplace",
+  "version": "0.0.1",
+  "description": "A marketplace simulator in Node",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrmcduff/marketplace.git"
+  },
+  "keywords": [
+    "node",
+    "simulator",
+    "economy",
+    "marketplace"
+  ],
+  "author": "Michael McDuffee",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mrmcduff/marketplace/issues"
+  },
+  "homepage": "https://github.com/mrmcduff/marketplace#readme",
+  "dependencies": {
+    "mathjs": "^5.4.1"
+  }
+}
