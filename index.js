@@ -21,9 +21,21 @@ const listing = {
 }
 console.log(JSON.stringify(myMarket.list(listing)));
 const secondListing = {
-  sellerId: 'foo',
+  sellerId: 'bar',
   value: 12,
 }
 console.log(JSON.stringify(myMarket.list(secondListing)));
+const bid = {
+  buyerId: 'baz',
+  value: 11,
+  quantity: 2,
+}
 
+const secondBid = {
+  buyerId: 'zop',
+  value: 15,
+}
+console.log(JSON.stringify(myMarket.offer(bid)));
+console.log(JSON.stringify(myMarket.offer(secondBid)));
+myMarket.settle();
 console.log(avg);
