@@ -10,13 +10,10 @@ class Market {
 
   list(listing) {
     if (!listing || !listing.sellerId || !listing.value) {
-      return false;
+      return null;
     }
 
     let quantity = listing.quantity ? listing.quantity : 1;
-    if (this.listings[listing.sellerId]) {
-      quantity += this.listings[listing.sellerId].quantity;
-    }
 
     this.listings[listing.sellerId] = {
       quantity,
@@ -28,12 +25,10 @@ class Market {
 
   offer(bid) {
     if (!bid || !bid.buyerId || !bid.value) {
-      return false;
+      return null;
     }
+
     let quantity = bid.quantity ? bid.quantity : 1;
-    if (this.offers[bid.buyerId]) {
-      quantity += this.offers[bid.buyerId].quantity;
-    }
 
     this.offers[bid.buyerId] = {
       quantity,
@@ -43,11 +38,8 @@ class Market {
   }
 
   settle() {
-    console.log('offers');
     const sortedBids = this.orderByValue(this.offers);
-    console.log(JSON.stringify(sortedBids));
     const sortedListings = this.orderByValue(this.listings);
-    console.log(JSON.stringify(sortedListings));
     const sales = [];
     let bidIndex = 0;
     let listIndex = 0;
@@ -71,7 +63,9 @@ class Market {
   }
 
   orderByValue(itemMap) {
-    const items = Object.keys(itemMap).map( id => itemMap[id]);
+    const items = Object.keys(itemMap).map( id => {
+      return { id, ...itemMap[id]}
+    });
     items.sort((a, b) => b.value - a.value );
     return items;
   }

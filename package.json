@@ -4,7 +4,21 @@
   "description": "A marketplace simulator in Node",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "jest --coverage"
+  },
+  "jest": {
+    "verbose": true,
+    "collectCoverageFrom": [
+      "src/*.{js,jsx}",
+      "!**/node_modules/**"
+    ],
+    "coverageThreshold": {
+      "src/": {
+        "branches": 40,
+        "statements": 40
+      }
+    }
   },
   "repository": {
     "type": "git",
