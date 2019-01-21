@@ -7,12 +7,14 @@ describe('Market constructor testing', () => {
     market = new Market();
     expect(market.price).toEqual(1);
     expect(market.good).toBeUndefined();
+    expect(market.turn).toEqual(0);
   });
 
-  it('accepts a given value and good', () => {
-    market = new Market(5, 'hammers');
+  it('accepts a given value, good, and start index', () => {
+    market = new Market(5, 'hammers', 8);
     expect(market.price).toEqual(5);
     expect(market.good).toEqual('hammers');
+    expect(market.turn).toEqual(8);
   });
 });
 
@@ -335,5 +337,10 @@ describe('Market settling tests', () => {
     expect(sales[2].buyerId).toEqual('buyer2');
     expect(sales[2].quantity).toEqual(2);
     expect(sales[2].sellerId).toEqual('seller2');
+
+    expect(market.salesHistory.length).toEqual(1);
+    expect(market.salesHistory[0].sales).toBeTruthy();
+    expect(market.salesHistory[0].sales.length).toEqual(3);
+    expect(market.salesHistory[0].sales[0]).not.toBe(sales[0]);
   });
 });

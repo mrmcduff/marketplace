@@ -1,11 +1,13 @@
 
 class Market {
 
-  constructor(price, good) {
+  constructor(price, good, startIndex) {
     this.price = price ? price : 1;
     this.good = good;
     this.listings = {};
     this.offers = {};
+    this.salesHistory = [];
+    this.turn = startIndex ? startIndex: 0;
   }
 
   list(listing) {
@@ -41,6 +43,7 @@ class Market {
     const sortedBids = this.orderByValue(this.offers);
     const sortedListings = this.orderByValue(this.listings);
     const sales = [];
+    const recordedSales = [];
     let bidIndex = 0;
     let listIndex = 0;
     while(bidIndex < sortedBids.length && listIndex < sortedListings.length) {
@@ -54,11 +57,16 @@ class Market {
           bidIndex++;
         }
         sales.push(sale);
+        recordedSales.push({...sale});
       } else {
         // The bid was lower than the listing price
         listIndex++;
       }
     }
+    this.salesHistory.push({
+      turn: this.turn,
+      sales: recordedSales,
+    });
     return sales;
   }
 
