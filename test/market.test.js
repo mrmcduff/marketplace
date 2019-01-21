@@ -283,7 +283,7 @@ describe('Market testing', () => {
 });
 
 describe('Market settling tests', () => {
-  it('returns sales', () => {
+  it('returns sales and records history', () => {
     market = new Market();
     const firstListing = {
       id: 'seller1',
@@ -342,5 +342,7 @@ describe('Market settling tests', () => {
     expect(market.salesHistory[0].sales).toBeTruthy();
     expect(market.salesHistory[0].sales.length).toEqual(3);
     expect(market.salesHistory[0].sales[0]).not.toBe(sales[0]);
+    expect(market.salesHistory[0].quantity).toEqual(7);
+    expect(market.salesHistory[0].volume).toEqual(2*20 + 5*17);
   });
 });

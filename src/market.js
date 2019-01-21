@@ -46,11 +46,15 @@ class Market {
     const recordedSales = [];
     let bidIndex = 0;
     let listIndex = 0;
+    let totalSold = 0;
+    let totalSales = 0;
     while(bidIndex < sortedBids.length && listIndex < sortedListings.length) {
       const [ sale, bid, listing ] = this.makeSale(sortedBids[bidIndex], sortedListings[listIndex]);
       if (sale) {
         sortedBids[bidIndex].quantity = bid.quantity;
         sortedListings[listIndex].quantity = listing.quantity;
+        totalSold += sale.quantity;
+        totalSales += sale.quantity * sale.price;
         if (bid.quantity > 0) {
           listIndex++;
         } else {
@@ -66,8 +70,15 @@ class Market {
     this.salesHistory.push({
       turn: this.turn,
       sales: recordedSales,
+      quantity: totalSold,
+      volume: totalSales,
     });
+    this.evaluateEstimates();
     return sales;
+  }
+
+  evaluateEstimates() {
+
   }
 
   orderByValue(itemMap) {
