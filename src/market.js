@@ -9,32 +9,32 @@ class Market {
   }
 
   list(listing) {
-    if (!listing || !listing.sellerId || !listing.value) {
+    if (!listing || !listing.id || !listing.value) {
       return null;
     }
 
     let quantity = listing.quantity ? listing.quantity : 1;
 
-    this.listings[listing.sellerId] = {
+    this.listings[listing.id] = {
       quantity,
       value: listing.value,
     };
 
-    return this.listings[listing.sellerId];
+    return this.listings[listing.id];
   }
 
   offer(bid) {
-    if (!bid || !bid.buyerId || !bid.value) {
+    if (!bid || !bid.id || !bid.value) {
       return null;
     }
 
     let quantity = bid.quantity ? bid.quantity : 1;
 
-    this.offers[bid.buyerId] = {
+    this.offers[bid.id] = {
       quantity,
       value: bid.value,
     };
-    return this.offers[bid.buyerId];                                     
+    return this.offers[bid.id];                                     
   }
 
   settle() {
@@ -71,15 +71,15 @@ class Market {
   }
 
   makeSale(bid, listing) {
-    if (!bid || !listing || bid.value < listing.value) {
+    if (!bid || !listing || bid.value < listing.value || bid.id === listing.id) {
       return [ null, null, null ];
     }
     const quantity = Math.min(bid.quantity, listing.quantity);
     const sale = {
       price: listing.value,
       quantity,
-      buyerId: bid.buyerId,
-      sellerId: listing.sellerId,
+      buyerId: bid.id,
+      sellerId: listing.id,
     };
     bid.quantity -= quantity;
     listing.quantity -= quantity;
