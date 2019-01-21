@@ -1,4 +1,4 @@
-const Market = require('./market');
+const Market = require('./src/market');
 
 const average = function(list) {
   if (!list) {
