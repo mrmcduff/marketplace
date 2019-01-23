@@ -1,17 +1,19 @@
-const Market = require('../src/market');
+import Market from '../../src/market/market';
+import { buildMarket } from '../../src/market/factories/marketFactory';
+import { Exchange, Sale } from '../../src/market/interfaces';
 
-let market;
+let market: Market;
 
 describe('Market constructor testing', () => {
   it('builds with default arguments', () => {
-    market = new Market();
+    market = buildMarket();
     expect(market.price).toEqual(1);
-    expect(market.good).toBeUndefined();
+    expect(market.good).toBeFalsy();
     expect(market.turn).toEqual(0);
   });
 
   it('accepts a given value, good, and start index', () => {
-    market = new Market(5, 'hammers', 8);
+    market = buildMarket(5, 'hammers', 8);
     expect(market.price).toEqual(5);
     expect(market.good).toEqual('hammers');
     expect(market.turn).toEqual(8);
@@ -35,17 +37,6 @@ describe('Market testing', () => {
     expect(result.value).toEqual(177);
   });
 
-  it('uses the default quantity', () => {
-    const listing = {
-      id: 'foo',
-      value: 177,
-    }
-    const result = market.list(listing);
-    expect(result).toBeTruthy();
-    expect(result.quantity).toBe(1);
-    expect(result.value).toEqual(177);
-  });
-
   it('updates the value and adds quantity', () => {
     const listing = {
       id: 'foo',
@@ -55,6 +46,7 @@ describe('Market testing', () => {
     const secondListing = {
       id: 'foo',
       value: 10,
+      quantity: 1
     }
     const result = market.list(listing);
     const secondResult = market.list(secondListing);
@@ -70,6 +62,7 @@ describe('Market testing', () => {
     const bid = {
       id: 'bar',
       value: 15,
+      quantity: 1,
     };
 
     const secondBid = {
@@ -89,12 +82,13 @@ describe('Market testing', () => {
   });
 
   it('updates bid price and quantity', () => {
-    const bid = {
+    const bid: Exchange = {
       id: 'bar',
       value: 15,
+      quantity: 1,
     };
 
-    const secondBid = {
+    const secondBid: Exchange = {
       id: 'bar',
       value: 17,
       quantity: 8,
@@ -113,22 +107,19 @@ describe('Market testing', () => {
     expect(market.offers['bar'].quantity).toBe(8);
   });
 
-  it('rejects improper listings', () => {
+  it('rejects falsy listings', () => {
     expect(market.list(undefined)).toBeNull();
-    expect(market.list({ value: 15, quantity: 4})).toBeNull();
-    expect(market.list({ buyerId: 'foo', quantity: 4})).toBeNull();
   });
 
-  it('rejects improper offers', () => {
-    expect(market.offer(0)).toBeNull();
-    expect(market.offer({ value: 16, quantity: 2})).toBeNull();
-    expect(market.offer({ buyerId: 'hello', quantity: 7})).toBeNull();
+  it('rejects falsy offers', () => {
+    expect(market.offer(null)).toBeNull();
   });
 
   it('correctly orders a simple itemlist', () => {
     const bid = {
       id: 'bar',
       value: 15,
+      quantity: 2,
     };
 
     const secondBid = {
@@ -144,13 +135,14 @@ describe('Market testing', () => {
     expect(sortedList[0].id).toEqual('baz');
     expect(sortedList[0].value).toEqual(17);
     expect(sortedList[1].id).toEqual('bar');
-    expect(sortedList[1].quantity).toEqual(1);
+    expect(sortedList[1].quantity).toEqual(2);
   });
 
   it('handles tied itemlists in a deterministic fashion', () => {
     const list = {
       id: 'bar',
       value: 4,
+      quantity: 1,
     };
 
     const secondList = {
@@ -168,21 +160,24 @@ describe('Market testing', () => {
   });
 
   it('rejects sales without a bid and a listing', () => {
-    let [sale, bid, listing] = market.makeSale(null, null);
+    let sale: Sale;
+    let bid, listing: Exchange;
+    [sale, bid, listing] = market.makeSale(null, null);
     expect(sale).toBeNull();
     expect(bid).toBeNull();
     expect(listing).toBeNull();
 
-    const realBid = {
+    const realBid: Exchange = {
       id: 'foo',
       value: 10,
       quantity: 1,
     };
-    const realListing = {
+
+    const realListing: Exchange = {
       id: 'bar',
       value: 5,
       quantity: 2,
-    }
+    };
 
     [sale, bid, listing] = market.makeSale(realBid, null);
     expect(sale).toBeNull();

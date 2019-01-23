@@ -1,3 +1,7 @@
+# Generated
+dist/
+coverage/
+
 # Logs
 logs
 *.log

@@ -4,21 +4,13 @@
   "description": "A marketplace simulator in Node",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "test:coverage": "jest --coverage"
-  },
-  "jest": {
-    "verbose": true,
-    "collectCoverageFrom": [
-      "src/*.{js,jsx}",
-      "!**/node_modules/**"
-    ],
-    "coverageThreshold": {
-      "src/": {
-        "branches": 40,
-        "statements": 40
-      }
-    }
+    "test": "tsc && jest",
+    "test-coverage": "jest --coverage",
+    "build": "tsc",
+    "dev": "tsc --watch & nodemon dist",
+    "lint": "eslint src --ext ts",
+    "tsc": "tsc",
+    "tscv": "tsc --version"
   },
   "repository": {
     "type": "git",
@@ -37,9 +29,21 @@
   },
   "homepage": "https://github.com/mrmcduff/marketplace#readme",
   "dependencies": {
-    "mathjs": "^5.4.1"
+    "@types/node": "^10.12.18",
+    "mathjs": "^5.4.1",
+    "nodemon": "^1.18.9",
+    "typescript": "^3.2.4"
   },
   "devDependencies": {
-    "jest": "^23.6.0"
+    "@types/jest": "^23.3.13",
+    "@typescript-eslint/parser": "^1.0.0",
+    "eslint": "^5.12.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.15.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "jest": "^23.6.0",
+    "ts-jest": "^23.10.5",
+    "ts-node": "^8.0.1",
+    "tsc": "^1.20150623.0"
   }
 }

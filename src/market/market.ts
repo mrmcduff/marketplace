@@ -1,49 +1,44 @@
+import { Exchange, Sale, SalesRecord } from './interfaces';
 
-class Market {
+export default class Market {
 
-  constructor(price, good, startIndex) {
-    this.price = price ? price : 1;
+  price: number;
+  good: string;
+  turn: number;
+  offers: Map<string, Exchange>;
+  listings: Map<string, Exchange>;
+  salesHistory: SalesRecord[];
+
+  constructor(price: number = 1, good: string = '', startIndex: number = 0) {
+    this.price = price;
     this.good = good;
-    this.listings = {};
-    this.offers = {};
+    this.listings = new Map();
+    this.offers = new Map();
     this.salesHistory = [];
     this.turn = startIndex ? startIndex: 0;
   }
 
-  list(listing) {
-    if (!listing || !listing.id || !listing.value) {
+  list(listing: Exchange) : Exchange {
+    if (!listing) {
       return null;
     }
-
-    let quantity = listing.quantity ? listing.quantity : 1;
-
-    this.listings[listing.id] = {
-      quantity,
-      value: listing.value,
-    };
-
+    this.listings[listing.id] = {...listing};
     return this.listings[listing.id];
   }
 
-  offer(bid) {
-    if (!bid || !bid.id || !bid.value) {
+  offer(bid: Exchange) : Exchange {
+    if (!bid) {
       return null;
     }
-
-    let quantity = bid.quantity ? bid.quantity : 1;
-
-    this.offers[bid.id] = {
-      quantity,
-      value: bid.value,
-    };
+    this.offers[bid.id] = {...bid};
     return this.offers[bid.id];                                     
   }
 
   settle() {
     const sortedBids = this.orderByValue(this.offers);
     const sortedListings = this.orderByValue(this.listings);
-    const sales = [];
-    const recordedSales = [];
+    const sales: Sale[] = [];
+    const recordedSales: Sale[] = [];
     let bidIndex = 0;
     let listIndex = 0;
     let totalSold = 0;
@@ -81,15 +76,15 @@ class Market {
 
   }
 
-  orderByValue(itemMap) {
+  orderByValue(itemMap: Map<string, Exchange>): Exchange[] {
     const items = Object.keys(itemMap).map( id => {
-      return { id, ...itemMap[id]}
+      return {...itemMap[id]}
     });
     items.sort((a, b) => b.value - a.value );
     return items;
   }
 
-  makeSale(bid, listing) {
+  makeSale(bid: Exchange, listing: Exchange): [ Sale, Exchange, Exchange ] {
     if (!bid || !listing || bid.value < listing.value || bid.id === listing.id) {
       return [ null, null, null ];
     }
@@ -105,5 +100,3 @@ class Market {
     return [ sale, bid, listing ];
   }
 }
-
-module.exports = Market;
