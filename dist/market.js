@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Market {
     constructor(price = 1, good = '', startIndex = 0) {
-        this.price = price ? price : 1;
+        this.price = price;
         this.good = good;
         this.listings = new Map();
         this.offers = new Map();
