@@ -1,25 +1,6 @@
+import { Exchange, Sale, SalesRecord } from './interfaces';
 
-export type Exchange = {
-  id: string,
-  quantity: number,
-  value: number,
-}
-
-export interface Sale {
-  price: number,
-  quantity: number,
-  buyerId: string,
-  sellerId: string,
-}
-
-export interface SalesRecord {
-  turn: number,
-  quantity: number,
-  volume: number,
-  sales: Sale[],
-}
-
-export class Market {
+export default class Market {
 
   price: number;
   good: string;
@@ -56,8 +37,8 @@ export class Market {
   settle() {
     const sortedBids = this.orderByValue(this.offers);
     const sortedListings = this.orderByValue(this.listings);
-    const sales = [];
-    const recordedSales = [];
+    const sales: Sale[] = [];
+    const recordedSales: Sale[] = [];
     let bidIndex = 0;
     let listIndex = 0;
     let totalSold = 0;

@@ -87,5 +87,5 @@ class Market {
         return [sale, bid, listing];
     }
 }
-exports.Market = Market;
+exports.default = Market;
 //# sourceMappingURL=market.js.map

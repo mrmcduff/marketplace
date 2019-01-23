@@ -1,17 +1,19 @@
-import { Market, Exchange, Sale, SalesRecord } from '../src/market';
+import Market from '../../src/market/market';
+import { buildMarket } from '../../src/market/factories/marketFactory';
+import { Exchange, Sale } from '../../src/market/interfaces';
 
 let market: Market;
 
 describe('Market constructor testing', () => {
   it('builds with default arguments', () => {
-    market = new Market();
+    market = buildMarket();
     expect(market.price).toEqual(1);
     expect(market.good).toBeFalsy();
     expect(market.turn).toEqual(0);
   });
 
   it('accepts a given value, good, and start index', () => {
-    market = new Market(5, 'hammers', 8);
+    market = buildMarket(5, 'hammers', 8);
     expect(market.price).toEqual(5);
     expect(market.good).toEqual('hammers');
     expect(market.turn).toEqual(8);

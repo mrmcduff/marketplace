@@ -2,7 +2,7 @@
 module.exports = {
 	globals: {
 		'ts-jest': {
-			tsConfigFile: 'tsconfig.json'
+			tsConfig: 'tsconfig.json'
 		}
 	},
 	moduleFileExtensions: [
@@ -10,14 +10,14 @@ module.exports = {
 		'js'
 	],
 	transform: {
-		'^.+\\.(ts|tsx)$': './node_modules/ts-jest/preprocessor.js'
+		'^.+\\.(ts|tsx)$': 'ts-jest'
 	},
 	testMatch: [
 		'**/test/**/*.test.(ts|js)'
 	],
   testEnvironment: 'node',
   collectCoverageFrom: [
-    "src/*.{ts,js,jsx}",
+    "src/**/*.{ts,js,jsx}",
     "!**/node_modules/**"
   ],
   coverageThreshold: {
