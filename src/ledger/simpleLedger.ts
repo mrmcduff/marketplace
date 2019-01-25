@@ -19,7 +19,7 @@ export default class SimpleLedger extends BaseLedger {
     let totalQuantity = 0;
     let totalVolume = 0;
     exchanges.forEach(exchange => {
-      exchanges.push({...exchange});
+      copiedExchanges.push({...exchange});
       totalQuantity += exchange.quantity;
       totalVolume += exchange.quantity * exchange.value;
     });
@@ -50,11 +50,11 @@ export default class SimpleLedger extends BaseLedger {
   }
 
   getSalesRecords(length: number = 1) : SalesRecord[] {
-    if (this.salesHistory.length === 0) {
-      return [];
+    const copiedSalesRecords: SalesRecord[] = [];
+    for (let i = 0; i < length && i < this.salesHistory.length; i++) {
+      copiedSalesRecords.unshift(this.makeSalesRecordCopy(this.salesHistory[this.salesHistory.length - i - 1]));
     }
-    const copiedRecords: SalesRecord[] = [];
-    return copiedRecords;
+    return copiedSalesRecords;
   }
 
   getSalesRecord(turn: number): SalesRecord {
@@ -72,6 +72,7 @@ export default class SimpleLedger extends BaseLedger {
     if (record) {
       return {...record, exchanges: record.exchanges.slice()}
     }
+    return null;
   }
 
   getBids(length: number = 1): ExchangeRecord[] {
