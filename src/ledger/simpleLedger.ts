@@ -1,7 +1,7 @@
 import { BaseLedger } from "./baseLedger";
 import { Exchange, Sale, SalesRecord, ExchangeRecord } from '../market/interfaces';
 
-export class SimpleLedger extends BaseLedger {
+export default class SimpleLedger extends BaseLedger {
   salesHistory: SalesRecord[] = [];
   bidHistory: ExchangeRecord[] = [];
   listingHistory: ExchangeRecord[] = [];
@@ -74,17 +74,28 @@ export class SimpleLedger extends BaseLedger {
     }
   }
 
-  getBids(length: number = 1): ExchangeRecord[]{
-    return null;
+  getBids(length: number = 1): ExchangeRecord[] {
+    const copiedBids: ExchangeRecord[] = [];
+    for (let i = 0; i < length && i < this.bidHistory.length; i++) {
+      copiedBids.unshift(this.makeExchangeRecordCopy(this.bidHistory[this.bidHistory.length - i - 1]));
+    }
+    return copiedBids;
   }
-  getBidRecord(turn: number): ExchangeRecord{
-    return null;
+
+  getBidRecord(turn: number): ExchangeRecord {
+    return this.makeExchangeRecordCopy(this.bidHistory.find(exchange => exchange.turn === turn));
   }
-  getListings(length: number = 1): ExchangeRecord[]{
-    return null;
+
+  getListings(length: number = 1): ExchangeRecord[] {
+    const copiedListings: ExchangeRecord[] = [];
+    for (let i = 0; i < length && i < this.listingHistory.length; i++) {
+      copiedListings.unshift(this.makeExchangeRecordCopy(this.listingHistory[this.listingHistory.length - i - 1]));
+    }
+    return copiedListings;
   }
-  getListingRecord(turn: number): ExchangeRecord{
-    return null;
+
+  getListingRecord(turn: number): ExchangeRecord {
+    return this.makeExchangeRecordCopy(this.listingHistory.find(exchange => exchange.turn === turn));
   }
 
 }
