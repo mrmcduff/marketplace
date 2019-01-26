@@ -1,4 +1,5 @@
 import { Exchange, Sale, SalesRecord } from './interfaces';
+import Ledger from '../ledger/ledger';
 
 export default class Market {
 
@@ -8,14 +9,20 @@ export default class Market {
   offers: Map<string, Exchange>;
   listings: Map<string, Exchange>;
   salesHistory: SalesRecord[];
+  ledger: Ledger;
 
-  constructor(price: number = 1, good: string = '', startIndex: number = 0) {
+  constructor(
+    price: number,
+    good: string,
+    startIndex: number,
+    ledger: Ledger) {
     this.price = price;
     this.good = good;
     this.listings = new Map();
     this.offers = new Map();
     this.salesHistory = [];
     this.turn = startIndex ? startIndex: 0;
+    this.ledger = ledger;
   }
 
   list(listing: Exchange) : Exchange {
@@ -37,6 +44,8 @@ export default class Market {
   settle() {
     const sortedBids = this.orderByValue(this.offers);
     const sortedListings = this.orderByValue(this.listings);
+    this.ledger.recordBids(this.turn, sortedBids);
+    this.ledger.recordListings(this.turn, sortedListings);
     const sales: Sale[] = [];
     const recordedSales: Sale[] = [];
     let bidIndex = 0;
@@ -62,6 +71,8 @@ export default class Market {
         listIndex++;
       }
     }
+    //TODO: remove salesHistory
+    this.ledger.recordSales(this.turn, sales);
     this.salesHistory.push({
       turn: this.turn,
       sales: recordedSales,

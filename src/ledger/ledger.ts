@@ -1,6 +1,6 @@
 import { Exchange, Sale, SalesRecord, ExchangeRecord } from '../market/interfaces';
 
-export abstract class BaseLedger {
+export default abstract class Ledger {
   
   abstract recordBids(turn: number, bids: Exchange[]): void;
   abstract recordListings(turn: number, listings: Exchange[]): void;

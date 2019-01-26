@@ -22,7 +22,7 @@ describe('Market constructor testing', () => {
 
 describe('Market testing', () => {
   beforeEach(() => {
-    market =  new Market(10, 'widgets');
+    market =  buildMarket(10, 'widgets');
   });
 
   it('correctly accepts a listing', () => {
@@ -279,7 +279,7 @@ describe('Market testing', () => {
 
 describe('Market settling tests', () => {
   it('returns sales and records history', () => {
-    market = new Market();
+    market = buildMarket();
     const firstListing = {
       id: 'seller1',
       value: 20,
