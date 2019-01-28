@@ -45,7 +45,6 @@ export default class Market {
     this.ledger.recordBids(this.turn, sortedBids);
     this.ledger.recordListings(this.turn, sortedListings);
     const sales: Sale[] = [];
-    const recordedSales: Sale[] = [];
     let bidIndex = 0;
     let listIndex = 0;
     while(bidIndex < sortedBids.length && listIndex < sortedListings.length) {
@@ -59,7 +58,6 @@ export default class Market {
           bidIndex++;
         }
         sales.push(sale);
-        recordedSales.push({...sale});
       } else {
         // The bid was lower than the listing price
         listIndex++;
