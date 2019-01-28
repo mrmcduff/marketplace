@@ -8,7 +8,6 @@ export default class Market {
   turn: number;
   offers: Map<string, Exchange>;
   listings: Map<string, Exchange>;
-  salesHistory: SalesRecord[];
   ledger: Ledger;
 
   constructor(
@@ -20,7 +19,6 @@ export default class Market {
     this.good = good;
     this.listings = new Map();
     this.offers = new Map();
-    this.salesHistory = [];
     this.turn = startIndex ? startIndex: 0;
     this.ledger = ledger;
   }
@@ -50,15 +48,11 @@ export default class Market {
     const recordedSales: Sale[] = [];
     let bidIndex = 0;
     let listIndex = 0;
-    let totalSold = 0;
-    let totalSales = 0;
     while(bidIndex < sortedBids.length && listIndex < sortedListings.length) {
       const [ sale, bid, listing ] = this.makeSale(sortedBids[bidIndex], sortedListings[listIndex]);
       if (sale) {
         sortedBids[bidIndex].quantity = bid.quantity;
         sortedListings[listIndex].quantity = listing.quantity;
-        totalSold += sale.quantity;
-        totalSales += sale.quantity * sale.price;
         if (bid.quantity > 0) {
           listIndex++;
         } else {
@@ -71,14 +65,7 @@ export default class Market {
         listIndex++;
       }
     }
-    //TODO: remove salesHistory
     this.ledger.recordSales(this.turn, sales);
-    this.salesHistory.push({
-      turn: this.turn,
-      sales: recordedSales,
-      quantity: totalSold,
-      volume: totalSales,
-    });
     this.evaluateEstimates();
     return sales;
   }

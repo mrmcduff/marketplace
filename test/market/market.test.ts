@@ -333,11 +333,12 @@ describe('Market settling tests', () => {
     expect(sales[2].quantity).toEqual(2);
     expect(sales[2].sellerId).toEqual('seller2');
 
-    expect(market.salesHistory.length).toEqual(1);
-    expect(market.salesHistory[0].sales).toBeTruthy();
-    expect(market.salesHistory[0].sales.length).toEqual(3);
-    expect(market.salesHistory[0].sales[0]).not.toBe(sales[0]);
-    expect(market.salesHistory[0].quantity).toEqual(7);
-    expect(market.salesHistory[0].volume).toEqual(2*20 + 5*17);
+    const salesHistory = market.ledger.getSalesRecords();
+    expect(salesHistory.length).toEqual(1);
+    expect(salesHistory[0].sales).toBeTruthy();
+    expect(salesHistory[0].sales.length).toEqual(3);
+    expect(salesHistory[0].sales[0]).not.toBe(sales[0]);
+    expect(salesHistory[0].quantity).toEqual(7);
+    expect(salesHistory[0].volume).toEqual(2*20 + 5*17);
   });
 });
