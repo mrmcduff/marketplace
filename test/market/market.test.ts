@@ -2,17 +2,21 @@ import Market from '../../src/market/market';
 import { Exchange } from '../../src/market/interfaces';
 import Ledger from '../../src/ledger/ledger';
 import SettlementStrategy from '../../src/market/strategies/settlementStrategy';
+import EvaluateSalesStrategy from '../../src/market/strategies/evaluateSalesStrategy';
 import TestLedger from '../testClasses/testLedger';
 import TestSettlementStrategy from '../testClasses/testSettlementStrategy';
+import TestEvaluateSalesStrategy from '../testClasses/testEvaluateSalesStrategy';
 
 let market: Market;
 let settlementStrategy: SettlementStrategy;
 let ledger: Ledger;
+let evaluateSalesStrategy: EvaluateSalesStrategy;
 
 let mockRecordSales;
 let mockRecordBids;
 let mockRecordListings;
 let mockMakeSales;
+let mockEvaluateSales;
 
 describe('Market testing', () => {
   beforeEach(() => {
@@ -20,9 +24,11 @@ describe('Market testing', () => {
     mockRecordSales = jest.fn();
     mockRecordBids = jest.fn();
     mockRecordListings = jest.fn();
+    mockEvaluateSales = jest.fn();
     settlementStrategy = new TestSettlementStrategy({ mockMakeSales });
+    evaluateSalesStrategy = new TestEvaluateSalesStrategy({ mockEvaluateSales });
     ledger = new TestLedger({ mockRecordSales, mockRecordBids, mockRecordListings });
-    market =  new Market(10, 'widget', 0, ledger, settlementStrategy);
+    market =  new Market(10, 1, 'widget', 0, ledger, settlementStrategy, evaluateSalesStrategy);
   });
 
   it('correctly accepts a listing', () => {
@@ -198,9 +204,15 @@ describe('Market testing', () => {
 
     const salesArray = [{ price: 5, quantity: 5, buyerId: 'foo', sellerId: 'bar' }];
     mockMakeSales.mockReturnValueOnce(salesArray);
+    mockEvaluateSales.mockReturnValueOnce([5, 6]);
     const sales = market.settle();
     expect(mockRecordBids).toHaveBeenCalled();
     expect(mockRecordListings).toHaveBeenCalled();
     expect(mockRecordSales).toHaveBeenCalledWith(0, salesArray);
+    expect(mockEvaluateSales).toHaveBeenCalledWith(ledger);
+    expect(market.estimatedQuantity).toEqual(6);
+    expect(market.estimatedPrice).toEqual(5);
+    expect(market.turn).toEqual(1);
+    expect(sales).toEqual(salesArray);
   });
 });

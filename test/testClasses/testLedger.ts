@@ -6,34 +6,34 @@ export default class TestLedger implements Ledger {
   functionObject: any;
 
   constructor(initializer: {
-    mockRecordBids?: Function,
-    mockRecordListings?: Function,
-    mockRecordSales?: Function,
-    mockGetSalesRecords?: Function,
-    mockGetSalesRecord?: Function,
-    mockGetBids?: Function,
-    mockGetBidRecord?: Function,
-    mockGetListings?: Function,
-    mockGetListingRecord?: Function,
+    mockRecordBids?: (turn: number, bids: Exchange[]) => void,
+    mockRecordListings?: (turn: number, listings: Exchange[]) => void,
+    mockRecordSales?: (turn: number, sales: Sale[]) => void,
+    mockGetSalesRecords?: (length?: number) => SalesRecord[],
+    mockGetSalesRecord?: (turn: number) => SalesRecord,
+    mockGetBids?: (length?: number) => ExchangeRecord[],
+    mockGetBidRecord?: (turn: number) => ExchangeRecord,
+    mockGetListings?: (length?: number)=> ExchangeRecord[],
+    mockGetListingRecord?: (turn: number) => ExchangeRecord,
   }) {
     this.functionObject = initializer;
   }
 
   recordBids(turn: number, bids: Exchange[]): void {
     if (this.functionObject.mockRecordBids) {
-      this.functionObject.mockRecordBids(turn, bids);
+      return this.functionObject.mockRecordBids(turn, bids);
     }
   }
 
   recordListings(turn: number, listings: Exchange[]): void {
     if (this.functionObject.mockRecordListings) {
-      this.functionObject.mockRecordListings(turn, listings);
+      return this.functionObject.mockRecordListings(turn, listings);
     }
   }
   
   recordSales(turn: number, sales: Sale[]): void {
     if (this.functionObject.mockRecordSales) {
-      this.functionObject.mockRecordSales(turn, sales);
+      return this.functionObject.mockRecordSales(turn, sales);
     }
   }
 

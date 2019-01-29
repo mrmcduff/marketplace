@@ -1,31 +1,37 @@
 import { Exchange, Sale, SalesRecord } from './interfaces';
 import Ledger from '../ledger/ledger';
 import SettlementStrategy from './strategies/settlementStrategy';
-import SingleSidedSettlementStrategy from './strategies/singleSidedSettlementStrategy';
+import EvaluateSalesStrategy from './strategies/evaluateSalesStrategy';
 
 export default class Market {
 
-  price: number;
+  estimatedPrice: number;
+  estimatedQuantity: number;
   good: string;
   turn: number;
   offers: Map<string, Exchange>;
   listings: Map<string, Exchange>;
   ledger: Ledger;
   settlementStrategy: SettlementStrategy;
+  evaluateSalesStrategy: EvaluateSalesStrategy
 
   constructor(
-    price: number,
+    initialPrice: number,
+    initialQuantity: number,
     good: string,
     startIndex: number,
     ledger: Ledger,
-    settlementStrategy: SettlementStrategy) {
-    this.price = price;
+    settlementStrategy: SettlementStrategy,
+    evaluateSalesStrategy: EvaluateSalesStrategy) {
+    this.estimatedPrice = initialPrice;
+    this.estimatedQuantity = initialQuantity;
     this.good = good;
     this.listings = new Map();
     this.offers = new Map();
     this.turn = startIndex ? startIndex: 0;
     this.ledger = ledger;
     this.settlementStrategy = settlementStrategy;
+    this.evaluateSalesStrategy = evaluateSalesStrategy;
   }
 
   list(listing: Exchange) : Exchange {
@@ -52,11 +58,12 @@ export default class Market {
     const sales: Sale[] = this.settlementStrategy.makeSales(sortedBids, sortedListings);
     this.ledger.recordSales(this.turn, sales);
     this.evaluateEstimates();
+    this.turn += 1;
     return sales;
   }
 
   evaluateEstimates() {
-
+    [this.estimatedPrice, this.estimatedQuantity] = this.evaluateSalesStrategy.evaluateSales(this.ledger);
   }
 
   orderByValue(itemMap: Map<string, Exchange>): Exchange[] {
