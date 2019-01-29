@@ -1,28 +1,28 @@
 import Market from '../../src/market/market';
-import { buildMarket } from '../../src/market/factories/marketFactory';
-import { Exchange, Sale } from '../../src/market/interfaces';
+import { Exchange } from '../../src/market/interfaces';
+import Ledger from '../../src/ledger/ledger';
+import SettlementStrategy from '../../src/market/strategies/settlementStrategy';
+import TestLedger from '../testClasses/testLedger';
+import TestSettlementStrategy from '../testClasses/testSettlementStrategy';
 
 let market: Market;
+let settlementStrategy: SettlementStrategy;
+let ledger: Ledger;
 
-describe('Market constructor testing', () => {
-  it('builds with default arguments', () => {
-    market = buildMarket();
-    expect(market.price).toEqual(1);
-    expect(market.good).toBeFalsy();
-    expect(market.turn).toEqual(0);
-  });
-
-  it('accepts a given value, good, and start index', () => {
-    market = buildMarket(5, 'hammers', 8);
-    expect(market.price).toEqual(5);
-    expect(market.good).toEqual('hammers');
-    expect(market.turn).toEqual(8);
-  });
-});
+let mockRecordSales;
+let mockRecordBids;
+let mockRecordListings;
+let mockMakeSales;
 
 describe('Market testing', () => {
   beforeEach(() => {
-    market =  buildMarket(10, 'widgets');
+    mockMakeSales = jest.fn();
+    mockRecordSales = jest.fn();
+    mockRecordBids = jest.fn();
+    mockRecordListings = jest.fn();
+    settlementStrategy = new TestSettlementStrategy({ mockMakeSales });
+    ledger = new TestLedger({ mockRecordSales, mockRecordBids, mockRecordListings });
+    market =  new Market(10, 'widget', 0, ledger, settlementStrategy);
   });
 
   it('correctly accepts a listing', () => {
@@ -159,127 +159,7 @@ describe('Market testing', () => {
     expect(sortedListings[1].quantity).toEqual(8);
   });
 
-  it('rejects sales without a bid and a listing', () => {
-    let sale: Sale;
-    let bid, listing: Exchange;
-    [sale, bid, listing] = market.makeSale(null, null);
-    expect(sale).toBeNull();
-    expect(bid).toBeNull();
-    expect(listing).toBeNull();
-
-    const realBid: Exchange = {
-      id: 'foo',
-      value: 10,
-      quantity: 1,
-    };
-
-    const realListing: Exchange = {
-      id: 'bar',
-      value: 5,
-      quantity: 2,
-    };
-
-    [sale, bid, listing] = market.makeSale(realBid, null);
-    expect(sale).toBeNull();
-    expect(bid).toBeNull();
-    expect(listing).toBeNull();
-
-    [sale, bid, listing] = market.makeSale(null, realListing);
-    expect(sale).toBeNull();
-    expect(bid).toBeNull();
-    expect(listing).toBeNull();
-  });
-
-  it('rejects sales when the bid is lower than the listing', () => {
-    const bid = {
-      id: 'foo',
-      value: 1,
-      quantity: 1,
-    };
-
-    const listing = {
-      id: 'bar',
-      value: 4,
-      quantity: 4,
-    };
-
-    const [sale, resultBid, resultListing] = market.makeSale(bid, listing);
-    expect(sale).toBeNull();
-    expect(resultBid).toBeNull();
-    expect(resultListing).toBeNull();
-  });
-
-  it('rejects sales when the buyer and seller are the same', () => {
-    const bid = {
-      id: 'foo',
-      value: 9,
-      quantity: 1,
-    };
-
-    const listing = {
-      id: 'foo',
-      value: 4,
-      quantity: 4,
-    };
-
-    const [sale, resultBid, resultListing] = market.makeSale(bid, listing);
-    expect(sale).toBeNull();
-    expect(resultBid).toBeNull();
-    expect(resultListing).toBeNull();
-  });
-
-  it('makes a sale and updates quantities correctly', () => {
-    const bid = {
-      id: 'foo',
-      value: 10,
-      quantity: 1,
-    };
-
-    const listing = {
-      id: 'bar',
-      value: 4,
-      quantity: 4,
-    };
-    const [sale, resultBid, resultListing] = market.makeSale(bid, listing);
-    expect(sale).toBeTruthy();
-    expect(sale.price).toEqual(4);
-    expect(sale.quantity).toEqual(1);
-    expect(sale.buyerId).toEqual('foo');
-    expect(sale.sellerId).toEqual('bar');
-    expect(resultBid).toBeTruthy();
-    expect(resultBid.quantity).toEqual(0);
-    expect(resultListing).toBeTruthy();
-    expect(resultListing.quantity).toEqual(3);
-  });
-
-  it('makes a sale and updates when the bid offer quantity is greater', () => {
-    const bid = {
-      id: 'foo',
-      value: 10,
-      quantity: 3,
-    };
-
-    const listing = {
-      id: 'bar',
-      value: 7,
-      quantity: 2,
-    };
-    const [sale, resultBid, resultListing] = market.makeSale(bid, listing);
-    expect(sale).toBeTruthy();
-    expect(sale.price).toEqual(7);
-    expect(sale.quantity).toEqual(2);
-    expect(sale.buyerId).toEqual('foo');
-    expect(sale.sellerId).toEqual('bar');
-    expect(resultBid).toBeTruthy();
-    expect(resultBid.quantity).toEqual(1);
-    expect(resultListing).toBeTruthy();
-    expect(resultListing.quantity).toEqual(0);
-  });
-});
-
-describe('Market settling tests', () => {
-  it('returns sales and records history', () => {
-    market = buildMarket();
+  it('returns sales and records history and settles using strategy', () => {
     const firstListing = {
       id: 'seller1',
       value: 20,
@@ -315,30 +195,12 @@ describe('Market settling tests', () => {
     market.offer(firstOffer);
     market.offer(secondOffer);
     market.offer(thirdOffer);
+
+    const salesArray = [{ price: 5, quantity: 5, buyerId: 'foo', sellerId: 'bar' }];
+    mockMakeSales.mockReturnValueOnce(salesArray);
     const sales = market.settle();
-    expect(sales).toBeTruthy();
-    expect(sales.length).toEqual(3);
-    expect(sales[0].price).toEqual(20);
-    expect(sales[0].buyerId).toEqual('buyer3');
-    expect(sales[0].quantity).toEqual(2);
-    expect(sales[0].sellerId).toEqual('seller1');
-
-    expect(sales[1].price).toEqual(17);
-    expect(sales[1].buyerId).toEqual('buyer1');
-    expect(sales[1].quantity).toEqual(3);
-    expect(sales[1].sellerId).toEqual('seller2');
-
-    expect(sales[2].price).toEqual(17);
-    expect(sales[2].buyerId).toEqual('buyer2');
-    expect(sales[2].quantity).toEqual(2);
-    expect(sales[2].sellerId).toEqual('seller2');
-
-    const salesHistory = market.ledger.getSalesRecords();
-    expect(salesHistory.length).toEqual(1);
-    expect(salesHistory[0].sales).toBeTruthy();
-    expect(salesHistory[0].sales.length).toEqual(3);
-    expect(salesHistory[0].sales[0]).not.toBe(sales[0]);
-    expect(salesHistory[0].quantity).toEqual(7);
-    expect(salesHistory[0].volume).toEqual(2*20 + 5*17);
+    expect(mockRecordBids).toHaveBeenCalled();
+    expect(mockRecordListings).toHaveBeenCalled();
+    expect(mockRecordSales).toHaveBeenCalledWith(0, salesArray);
   });
 });
