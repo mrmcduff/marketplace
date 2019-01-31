@@ -2,6 +2,7 @@ import { Market } from '../market';
 import { LedgerStyle, buildLedger } from '../../ledger/factories/ledgerFactory';
 import { SettlementStyle, buildSettlementStrategy } from './settlementStrategyFactory';
 import { SalesStrategyType, buildEvaluateSalesStrategy } from './evaluateSalesStrategyFactory';
+import { ConsumerStrategyStyle, buildConsumerStrategy } from './consumerStrategyFactory';
 
 export function buildMarket(
   price: number = 1,
@@ -11,6 +12,7 @@ export function buildMarket(
   style: LedgerStyle = LedgerStyle.SIMPLE,
   settlementStyle: SettlementStyle = SettlementStyle.SELLER_FAVORED,
   evaluateSalesStyle: SalesStrategyType = SalesStrategyType.NAIVE,
+  consumerStrategyStyle: ConsumerStrategyStyle = ConsumerStrategyStyle.RAW,
   ): Market {
   return new Market(
     price,
@@ -19,5 +21,6 @@ export function buildMarket(
     startIndex,
     buildLedger(style),
     buildSettlementStrategy(settlementStyle),
-    buildEvaluateSalesStrategy(evaluateSalesStyle));
+    buildEvaluateSalesStrategy(evaluateSalesStyle),
+    buildConsumerStrategy(consumerStrategyStyle));
 }

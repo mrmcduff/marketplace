@@ -2,6 +2,7 @@ import { Exchange, Sale, SalesRecord } from './interfaces';
 import { Ledger } from '../ledger/ledger';
 import { SettlementStrategy } from './strategies/settlementStrategy';
 import { EvaluateSalesStrategy } from './strategies/evaluateSalesStrategy';
+import { ConsumerStrategy } from './strategies/consumer';
 
 export class Market {
 
@@ -13,7 +14,8 @@ export class Market {
   listings: Map<string, Exchange>;
   ledger: Ledger;
   settlementStrategy: SettlementStrategy;
-  evaluateSalesStrategy: EvaluateSalesStrategy
+  evaluateSalesStrategy: EvaluateSalesStrategy;
+  consumerStrategy: ConsumerStrategy;
 
   constructor(
     initialPrice: number,
@@ -22,7 +24,9 @@ export class Market {
     startIndex: number,
     ledger: Ledger,
     settlementStrategy: SettlementStrategy,
-    evaluateSalesStrategy: EvaluateSalesStrategy) {
+    evaluateSalesStrategy: EvaluateSalesStrategy,
+    consumerStrategy: ConsumerStrategy
+    ) {
     this.estimatedPrice = initialPrice;
     this.estimatedQuantity = initialQuantity;
     this.good = good;
@@ -32,6 +36,7 @@ export class Market {
     this.ledger = ledger;
     this.settlementStrategy = settlementStrategy;
     this.evaluateSalesStrategy = evaluateSalesStrategy;
+    this.consumerStrategy = consumerStrategy;
   }
 
   list(listing: Exchange) : Exchange {
@@ -51,6 +56,10 @@ export class Market {
   }
 
   settle() {
+    const consumerBids = this.consumerStrategy.generateConsumerBids(this.ledger);
+    consumerBids.forEach(bid => {
+      this.offer(bid);
+    });
     const sortedBids = this.orderByValue(this.offers);
     const sortedListings = this.orderByValue(this.listings);
     this.ledger.recordBids(this.turn, sortedBids);
