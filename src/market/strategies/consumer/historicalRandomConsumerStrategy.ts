@@ -13,6 +13,7 @@ export type HistoricalParams = {
 export class HistoricalRandomConsumerStrategy extends RandomConsumerStrategy {
 
   historicalParams: HistoricalParams;
+  getHistoricalTotals: (salesHistory: SalesRecord[]) => [number, number, number];
 
   constructor(
     name: string,
@@ -21,9 +22,11 @@ export class HistoricalRandomConsumerStrategy extends RandomConsumerStrategy {
     baseBidQuantity: number,
     randomParams: RandomParams,
     historicalParams: HistoricalParams,
+    getHistoricalTotals: (salesHistory: SalesRecord[]) => [number, number, number],
   ) {
     super(name, basePrice, baseQuantity, baseBidQuantity, randomParams);
     this.historicalParams = historicalParams;
+    this.getHistoricalTotals = getHistoricalTotals;
   }
 
   generateConsumerBids(ledger: Ledger): Exchange[] {
@@ -48,31 +51,27 @@ export class HistoricalRandomConsumerStrategy extends RandomConsumerStrategy {
     return consumerBids;
   }
 
+  /**
+   * 
+   * @param historicalTotals A tuple: [totalVolume, totalQuanitySold, totalNumberOfSales]
+   * @param salesHistory 
+   */
   calculateStartingBids(historicalTotals: [number, number, number], salesHistory: SalesRecord[]): [number, number, number] {
-    const startingPrice = historicalTotals !== null && historicalTotals[1] !== 0
+    if (historicalTotals == null) {
+      return [this.basePrice, this.baseQuantity, this.baseBidQuantity];
+    }
+    const startingPrice = historicalTotals[1] !== 0
       ? Math.floor(historicalTotals[0] / historicalTotals[1])
       : this.basePrice;
 
-    const startingQuantity = historicalTotals !== null && salesHistory.length > 0
-      ? Math.floor[historicalTotals[1] / salesHistory.length]
-      : this.baseQuantity;
-    
-    const startingBidQuantity = historicalTotals !== null && salesHistory.length > 0
-      ? Math.floor[historicalTotals[2] / salesHistory.length]
+    const startingBidQuantity = salesHistory.length > 0
+      ? Math.floor(historicalTotals[2] / salesHistory.length)
       : this.baseBidQuantity;
     
+    // This is the quantity per bid, so we should divide by bid grouping size multiplied by number of bid groups
+    const startingQuantity = salesHistory.length > 0 && startingBidQuantity != 0
+      ? Math.floor(historicalTotals[1] / (salesHistory.length * startingBidQuantity))
+      : this.baseQuantity;
     return [startingPrice, startingQuantity, startingBidQuantity];
-  }
-
-  getHistoricalTotals(salesHistory: SalesRecord[]): [number, number, number] {
-    if (salesHistory.length === 0) {
-      return null;
-    }
-    const [volume, quantity, salesQuantity] = salesHistory.reduce<[number, number, number]>(
-      ([totalVolume, totalQuantity, totalSalesQuantity], salesRecord) => {
-        return [totalVolume + salesRecord.volume,
-          totalQuantity + salesRecord.quantity,
-          totalSalesQuantity + salesRecord.sales.length];
-      }, [0, 0, 0]);
   }
 }

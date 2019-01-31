@@ -4,8 +4,8 @@
   "description": "A marketplace simulator in Node",
   "main": "index.js",
   "scripts": {
-    "test": "tsc && jest",
-    "test-coverage": "jest --coverage",
+    "test": "tsc && jest --verbose",
+    "test-coverage": "jest --coverage --verbose",
     "build": "tsc",
     "dev": "tsc --watch & nodemon dist",
     "lint": "eslint src --ext ts",
