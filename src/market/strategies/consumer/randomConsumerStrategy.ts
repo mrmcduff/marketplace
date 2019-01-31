@@ -1,6 +1,7 @@
 import ConsumerStrategy from "./consumerStrategy";
 import { Exchange } from "../../interfaces";
 import { getRandomIntInclusive } from '../../utils/random';
+import Ledger from '../../../ledger/ledger';
 
 export type RandomParams = {
   priceRange: number,
@@ -37,7 +38,7 @@ export default class RandomConsumerStrategy implements ConsumerStrategy {
     }
   }
 
-  generateConsumerBids(): Exchange[] {
+  generateConsumerBids(ledger: Ledger): Exchange[] {
     const consumerBids: Exchange[] = [];
     let bidQuantity = this.generateValue(this.baseBidQuantity, this.randomParams.bidQuantityRange, 0);
 

@@ -1,5 +1,6 @@
 import { Exchange } from "../../interfaces";
+import Ledger from '../../../ledger/ledger';
 
 export default interface ConsumerStrategy {
-  generateConsumerBids(): Exchange[];
+  generateConsumerBids(ledger: Ledger): Exchange[];
 }
