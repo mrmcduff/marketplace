@@ -1,4 +1,4 @@
-import { HistoricalRandomConsumerStrategy, RandomParams, HistoricalParams } from '../../../../src/market/strategies/consumer';
+import { HistoricalRandomConsumerStrategy, RandomParams, HistoricalParams, ConsumerParams } from '../../../../src/market/strategies/consumer';
 import { TestLedger } from '../../../testClasses/testLedger';
 import { Exchange, SalesRecord } from '../../../../src/market/interfaces';
 
@@ -18,11 +18,14 @@ const historicalParams: HistoricalParams = {
   bidTurns: 0,
 };
 
+function makeParams(name: string, basePrice: number, baseQuantity: number, baseBidQuantity: number): ConsumerParams {
+  return { name, basePrice, baseQuantity, baseBidQuantity };
+}
 describe('Constructor tests for HistoricalRandomConsumerStrategy', () => {
 
   it('can be constructed', () => {
     getHistoricalTotals = jest.fn();
-    const strategy = new HistoricalRandomConsumerStrategy('foo', 10, 3, 2, randomParams, historicalParams, getHistoricalTotals);
+    const strategy = new HistoricalRandomConsumerStrategy(makeParams('foo', 10, 3, 2), randomParams, historicalParams, getHistoricalTotals);
     expect(strategy).toBeTruthy();
   });
 });
@@ -33,7 +36,7 @@ describe('Functionality tests for HistoricalRandomConsumerStrategy', () => {
     mockGetSalesRecords = jest.fn();
     getHistoricalTotals = jest.fn();
     ledger = new TestLedger({ mockGetSalesRecords });
-    strategy = new HistoricalRandomConsumerStrategy('foo', 10, 3, 2, randomParams, historicalParams, getHistoricalTotals);
+    strategy = new HistoricalRandomConsumerStrategy(makeParams('foo', 10, 3, 2), randomParams, historicalParams, getHistoricalTotals);
   });
 
   it ('Uses defaults if the totals are null', () => {
@@ -155,7 +158,7 @@ describe('Functionality tests for HistoricalRandomConsumerStrategy', () => {
     // Our starting values will be 12 for price, 6 for quantity, and 4 for bid quantity
     // Recall that our random ranges are 5 on price, 2 on quantity, and 2 on bid quantity
     exchanges.forEach(exchange => {
-      expect(exchange.id).toEqual(strategy.name);
+      expect(exchange.id).toEqual(strategy.consumerParams.name);
       expect(exchange.value).toBeGreaterThanOrEqual(7);
       expect(exchange.value).toBeLessThanOrEqual(17);
       expect(exchange.quantity).toBeGreaterThanOrEqual(4);

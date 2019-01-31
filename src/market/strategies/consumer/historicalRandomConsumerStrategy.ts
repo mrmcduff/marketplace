@@ -3,12 +3,8 @@ import { Exchange, SalesRecord } from '../../interfaces';
 import { Ledger } from '../../../ledger/ledger';
 import { RandomParams } from './randomParams';
 import { RandomConsumerStrategy } from './randomConsumerStrategy';
-
-export type HistoricalParams = {
-  salesTurns: number,
-  listingTurns: number,
-  bidTurns: number,
-}
+import { HistoricalParams } from './historicalParams';
+import { ConsumerParams } from './consumerParams';
 
 export class HistoricalRandomConsumerStrategy extends RandomConsumerStrategy {
 
@@ -16,15 +12,12 @@ export class HistoricalRandomConsumerStrategy extends RandomConsumerStrategy {
   getHistoricalTotals: (salesHistory: SalesRecord[]) => [number, number, number];
 
   constructor(
-    name: string,
-    basePrice: number,
-    baseQuantity: number,
-    baseBidQuantity: number,
+    consumerParams: ConsumerParams,
     randomParams: RandomParams,
     historicalParams: HistoricalParams,
     getHistoricalTotals: (salesHistory: SalesRecord[]) => [number, number, number],
   ) {
-    super(name, basePrice, baseQuantity, baseBidQuantity, randomParams);
+    super(consumerParams, randomParams);
     this.historicalParams = historicalParams;
     this.getHistoricalTotals = getHistoricalTotals;
   }
@@ -42,7 +35,7 @@ export class HistoricalRandomConsumerStrategy extends RandomConsumerStrategy {
       value = this.generateValue(startingPrice, this.randomParams.priceRange, 1);
       quantity = this.generateValue(startingQuantity, this.randomParams.quantityRange, 1);
       consumerBids.push({
-        id: this.name,
+        id: this.consumerParams.name,
         value,
         quantity,
       });
@@ -58,20 +51,20 @@ export class HistoricalRandomConsumerStrategy extends RandomConsumerStrategy {
    */
   calculateStartingBids(historicalTotals: [number, number, number], salesHistory: SalesRecord[]): [number, number, number] {
     if (historicalTotals == null) {
-      return [this.basePrice, this.baseQuantity, this.baseBidQuantity];
+      return [this.consumerParams.basePrice, this.consumerParams.baseQuantity, this.consumerParams.baseBidQuantity];
     }
     const startingPrice = historicalTotals[1] !== 0
       ? Math.floor(historicalTotals[0] / historicalTotals[1])
-      : this.basePrice;
+      : this.consumerParams.basePrice;
 
     const startingBidQuantity = salesHistory.length > 0
       ? Math.floor(historicalTotals[2] / salesHistory.length)
-      : this.baseBidQuantity;
+      : this.consumerParams.baseBidQuantity;
     
     // This is the quantity per bid, so we should divide by bid grouping size multiplied by number of bid groups
     const startingQuantity = salesHistory.length > 0 && startingBidQuantity != 0
       ? Math.floor(historicalTotals[1] / (salesHistory.length * startingBidQuantity))
-      : this.baseQuantity;
+      : this.consumerParams.baseQuantity;
     return [startingPrice, startingQuantity, startingBidQuantity];
   }
 }

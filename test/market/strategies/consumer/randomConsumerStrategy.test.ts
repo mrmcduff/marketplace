@@ -1,4 +1,4 @@
-import { RandomConsumerStrategy, RandomParams } from '../../../../src/market/strategies/consumer';
+import { RandomConsumerStrategy, RandomParams, ConsumerParams } from '../../../../src/market/strategies/consumer';
 import { TestLedger } from '../../../testClasses/testLedger';
 import { Ledger } from '../../../../src/ledger/ledger';
 import { Exchange } from '../../../../src/market/interfaces';
@@ -6,13 +6,17 @@ import { Exchange } from '../../../../src/market/interfaces';
 let ledger: Ledger;
 let strategy: RandomConsumerStrategy;
 
+function makeParams(name: string, basePrice: number, baseQuantity: number, baseBidQuantity: number): ConsumerParams {
+  return { name, basePrice, baseQuantity, baseBidQuantity };
+}
+
 describe('RandomConsumerStrategy constructor tests', () => {
   beforeEach(() => {
     ledger = new TestLedger({});
   });
 
   it('uses correct default random arguments', () => {
-    const randomConsumerStrategy = new RandomConsumerStrategy('name', 10, 5, 2);
+    const randomConsumerStrategy = new RandomConsumerStrategy(makeParams('name', 10, 5, 2));
 
     expect(randomConsumerStrategy.randomParams).toBeTruthy();
     expect(randomConsumerStrategy.randomParams.priceRange).toEqual(5);
@@ -26,7 +30,7 @@ describe('RandomConsumerStrategy constructor tests', () => {
       quantityRange: 888,
       bidQuantityRange: 111,
     }
-    const randomConsumerStrategy = new RandomConsumerStrategy('name', 10, 5, 2, randomParams);
+    const randomConsumerStrategy = new RandomConsumerStrategy(makeParams('name', 10, 5, 2), randomParams);
 
     expect(randomConsumerStrategy.randomParams).toBeTruthy();
     expect(randomConsumerStrategy.randomParams.priceRange).toEqual(randomParams.priceRange);
@@ -38,7 +42,7 @@ describe('RandomConsumerStrategy constructor tests', () => {
 describe('RandomConsumerStrategy tests', () => {
   beforeEach(() => {
     ledger = new TestLedger({});
-    strategy = new RandomConsumerStrategy('name', 10, 5, 2);
+    strategy = new RandomConsumerStrategy(makeParams('name', 10, 5, 2));
   });
 
   it('does not generate range lower than minimum', () => {
