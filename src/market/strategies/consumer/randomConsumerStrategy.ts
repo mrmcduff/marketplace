@@ -2,12 +2,7 @@ import { ConsumerStrategy } from "./consumerStrategy";
 import { Exchange } from "../../interfaces";
 import { getRandomIntInclusive } from '../../utils/random';
 import { Ledger } from '../../../ledger/ledger';
-
-export type RandomParams = {
-  priceRange: number,
-  quantityRange: number,
-  bidQuantityRange: number,
-}
+import { RandomParams } from './randomParams';
 
 export class RandomConsumerStrategy implements ConsumerStrategy {
   public name: string;

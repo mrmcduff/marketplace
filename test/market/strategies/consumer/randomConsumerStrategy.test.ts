@@ -1,4 +1,4 @@
-import { RandomConsumerStrategy, RandomParams } from '../../../../src/market/strategies/consumer/randomConsumerStrategy';
+import { RandomConsumerStrategy, RandomParams } from '../../../../src/market/strategies/consumer';
 import { TestLedger } from '../../../testClasses/testLedger';
 import { Ledger } from '../../../../src/ledger/ledger';
 import { Exchange } from '../../../../src/market/interfaces';
