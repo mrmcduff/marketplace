@@ -2,7 +2,7 @@ import { buildMarket } from '../../../src/market/factories/marketFactory';
 import { SettlementStyle } from '../../../src/market/factories/settlementStrategyFactory';
 import { LedgerStyle } from '../../../src/ledger/factories/ledgerFactory';
 import { SalesStrategyType } from '../../../src/market/factories/evaluateSalesStrategyFactory';
-import Market from '../../../src/market/market';
+import { Market } from '../../../src/market/market';
 
 describe('Market factory tests', () => {
   it('assigns the correct values', () => {

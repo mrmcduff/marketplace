@@ -1,6 +1,6 @@
-import RandomConsumerStrategy, { RandomParams } from '../../../../src/market/strategies/consumer/randomConsumerStrategy';
-import TestLedger from '../../../testClasses/testLedger';
-import Ledger from '../../../../src/ledger/ledger';
+import { RandomConsumerStrategy, RandomParams } from '../../../../src/market/strategies/consumer/randomConsumerStrategy';
+import { TestLedger } from '../../../testClasses/testLedger';
+import { Ledger } from '../../../../src/ledger/ledger';
 import { Exchange } from '../../../../src/market/interfaces';
 
 let ledger: Ledger;

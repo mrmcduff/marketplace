@@ -1,7 +1,7 @@
-import Good from "./good";
-import Wheat from "./wheat";
+import { Good } from "./good";
+import { Wheat } from "./wheat";
 
-export default class Beer implements Good {
+export class Beer implements Good {
 
   public name: string = 'beer';
   public workerTurns: number = 6;

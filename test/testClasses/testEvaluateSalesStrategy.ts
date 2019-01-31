@@ -1,7 +1,7 @@
-import EvaluateSalesStrategy from '../../src/market/strategies/evaluateSalesStrategy';
-import Ledger from '../../src/ledger/ledger';
+import { EvaluateSalesStrategy } from '../../src/market/strategies/evaluateSalesStrategy';
+import { Ledger } from '../../src/ledger/ledger';
 
-export default class TestEvaluateSalesStrategy implements EvaluateSalesStrategy {
+export class TestEvaluateSalesStrategy implements EvaluateSalesStrategy {
 
   functionObject: any;
 

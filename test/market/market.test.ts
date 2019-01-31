@@ -1,11 +1,11 @@
-import Market from '../../src/market/market';
+import { Market } from '../../src/market/market';
 import { Exchange } from '../../src/market/interfaces';
-import Ledger from '../../src/ledger/ledger';
-import SettlementStrategy from '../../src/market/strategies/settlementStrategy';
-import EvaluateSalesStrategy from '../../src/market/strategies/evaluateSalesStrategy';
-import TestLedger from '../testClasses/testLedger';
-import TestSettlementStrategy from '../testClasses/testSettlementStrategy';
-import TestEvaluateSalesStrategy from '../testClasses/testEvaluateSalesStrategy';
+import { Ledger } from '../../src/ledger/ledger';
+import { SettlementStrategy } from '../../src/market/strategies/settlementStrategy';
+import { EvaluateSalesStrategy } from '../../src/market/strategies/evaluateSalesStrategy';
+import { TestLedger } from '../testClasses/testLedger';
+import { TestSettlementStrategy } from '../testClasses/testSettlementStrategy';
+import { TestEvaluateSalesStrategy } from '../testClasses/testEvaluateSalesStrategy';
 
 let market: Market;
 let settlementStrategy: SettlementStrategy;

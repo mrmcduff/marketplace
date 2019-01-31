@@ -1,4 +1,4 @@
-import Market from '../market';
+import { Market } from '../market';
 import { LedgerStyle, buildLedger } from '../../ledger/factories/ledgerFactory';
 import { SettlementStyle, buildSettlementStrategy } from './settlementStrategyFactory';
 import { SalesStrategyType, buildEvaluateSalesStrategy } from './evaluateSalesStrategyFactory';

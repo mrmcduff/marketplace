@@ -1,5 +1,5 @@
-import SettlementStrategy from '../strategies/settlementStrategy';
-import SingleSidedSettlementStrategy from '../strategies/singleSidedSettlementStrategy';
+import { SettlementStrategy } from '../strategies/settlementStrategy';
+import { SingleSidedSettlementStrategy } from '../strategies/singleSidedSettlementStrategy';
 
 export enum SettlementStyle {
   BUYER_FAVORED,

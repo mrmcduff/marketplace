@@ -1,6 +1,6 @@
-import Ledger from '../../ledger/ledger';
+import { Ledger } from '../../ledger/ledger';
 
-export default interface EvaluateSalesStrategy {
+export interface EvaluateSalesStrategy {
   /**
    * A function that should evaluate an array of sales records and
    * return a predicted price and quantity for the next turn's sales.

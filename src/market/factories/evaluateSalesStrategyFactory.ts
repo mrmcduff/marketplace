@@ -1,5 +1,5 @@
-import EvaluateSalesStrategy from '../strategies/evaluateSalesStrategy';
-import NaiveSalesStrategy from '../strategies/naiveStrategy';
+import { EvaluateSalesStrategy } from '../strategies/evaluateSalesStrategy';
+import { NaiveStrategy } from '../strategies/naiveStrategy';
 
 export enum SalesStrategyType {
   NAIVE,
@@ -9,7 +9,7 @@ export enum SalesStrategyType {
 export function buildEvaluateSalesStrategy(strategyType: SalesStrategyType): EvaluateSalesStrategy {
   switch(strategyType) {
     case SalesStrategyType.NAIVE:
-      return new NaiveSalesStrategy();
+      return new NaiveStrategy();
     default:
       return null;
   }

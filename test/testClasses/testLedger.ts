@@ -1,7 +1,7 @@
-import Ledger from '../../src/ledger/ledger';
+import { Ledger } from '../../src/ledger/ledger';
 import { Exchange, ExchangeRecord, Sale, SalesRecord } from '../../src/market/interfaces';
 
-export default class TestLedger implements Ledger {
+export class TestLedger implements Ledger {
 
   functionObject: any;
 

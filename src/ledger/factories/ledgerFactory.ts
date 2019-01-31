@@ -1,5 +1,5 @@
-import Ledger from '../ledger';
-import SimpleLedger from '../simpleLedger';
+import { Ledger } from '../ledger';
+import { SimpleLedger } from '../simpleLedger';
 
 export enum LedgerStyle {
   SIMPLE,

@@ -1,7 +1,7 @@
 import { Exchange, Sale } from '../interfaces';
-import SettlementStrategy from './settlementStrategy';
+import { SettlementStrategy } from './settlementStrategy';
 
-export default class SingleSidedSettlementStrategy implements SettlementStrategy {
+export class SingleSidedSettlementStrategy implements SettlementStrategy {
 
   useSellerPrice = false;
   constructor(useSellerPrice: boolean) {

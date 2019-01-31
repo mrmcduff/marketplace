@@ -1,7 +1,7 @@
-import RawConsumerStrategy from '../../../../src/market/strategies/consumer/rawConsumerStrategy';
-import TestLedger from '../../../testClasses/testLedger';
-import Ledger from '../../../../src/ledger/ledger';
-import ConsumerStrategy from '../../../../src/market/strategies/consumer/consumerStrategy';
+import { RawConsumerStrategy } from '../../../../src/market/strategies/consumer/rawConsumerStrategy';
+import { TestLedger } from '../../../testClasses/testLedger';
+import { Ledger } from '../../../../src/ledger/ledger';
+import { ConsumerStrategy } from '../../../../src/market/strategies/consumer/consumerStrategy';
 
 let ledger: Ledger;
 let strategy: ConsumerStrategy;

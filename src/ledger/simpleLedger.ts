@@ -1,7 +1,7 @@
-import Ledger from "./ledger";
+import { Ledger } from "./ledger";
 import { Exchange, Sale, SalesRecord, ExchangeRecord } from '../market/interfaces';
 
-export default class SimpleLedger extends Ledger {
+export class SimpleLedger extends Ledger {
   salesHistory: SalesRecord[] = [];
   bidHistory: ExchangeRecord[] = [];
   listingHistory: ExchangeRecord[] = [];

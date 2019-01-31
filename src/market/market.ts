@@ -1,9 +1,9 @@
 import { Exchange, Sale, SalesRecord } from './interfaces';
-import Ledger from '../ledger/ledger';
-import SettlementStrategy from './strategies/settlementStrategy';
-import EvaluateSalesStrategy from './strategies/evaluateSalesStrategy';
+import { Ledger } from '../ledger/ledger';
+import { SettlementStrategy } from './strategies/settlementStrategy';
+import { EvaluateSalesStrategy } from './strategies/evaluateSalesStrategy';
 
-export default class Market {
+export class Market {
 
   estimatedPrice: number;
   estimatedQuantity: number;

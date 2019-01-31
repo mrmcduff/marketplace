@@ -1,6 +1,6 @@
-import Good from "./good";
+import { Good } from "./good";
 
-export default class Wheat implements Good {
+export class Wheat implements Good {
 
   public name: string = 'wheat';
   public workerTurns: number = 3;

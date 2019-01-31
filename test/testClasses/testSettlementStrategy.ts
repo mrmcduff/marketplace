@@ -1,7 +1,7 @@
 import { Exchange, Sale } from '../../src/market/interfaces';
-import SettlementStrategy from '../../src/market/strategies/settlementStrategy';
+import { SettlementStrategy } from '../../src/market/strategies/settlementStrategy';
 
-export default class TestSettlementStrategy implements SettlementStrategy {
+export class TestSettlementStrategy implements SettlementStrategy {
 
   functionObject: any;
 

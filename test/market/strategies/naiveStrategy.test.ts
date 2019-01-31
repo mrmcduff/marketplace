@@ -1,6 +1,6 @@
-import NaiveStrategy from '../../../src/market/strategies/naiveStrategy';
-import Ledger from '../../../src/ledger/ledger';
-import TestLedger from '../../testClasses/testLedger';
+import { NaiveStrategy } from '../../../src/market/strategies/naiveStrategy';
+import { Ledger } from '../../../src/ledger/ledger';
+import { TestLedger } from '../../testClasses/testLedger';
 import { SalesRecord } from '../../../src/market/interfaces';
 
 let strategy: NaiveStrategy;

@@ -1,6 +1,6 @@
-import SingleSidedSettlementStrategy from '../../../src/market/strategies/singleSidedSettlementStrategy';
+import { SingleSidedSettlementStrategy } from '../../../src/market/strategies/singleSidedSettlementStrategy';
 import { Exchange, Sale } from '../../../src/market/interfaces';
-import SettlementStrategy from '../../../src/market/strategies/settlementStrategy';
+import { SettlementStrategy } from '../../../src/market/strategies/settlementStrategy';
 
 let strategy: SingleSidedSettlementStrategy;
 

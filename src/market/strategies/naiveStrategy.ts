@@ -1,8 +1,8 @@
-import EvaluateSalesStrategy from './evaluateSalesStrategy';
-import Ledger from '../../ledger/ledger';
+import { EvaluateSalesStrategy } from './evaluateSalesStrategy';
+import { Ledger } from '../../ledger/ledger';
 import { SalesRecord } from '../interfaces';
 
-export default class NaiveStrategy implements EvaluateSalesStrategy {
+export class NaiveStrategy implements EvaluateSalesStrategy {
 
   evaluateSales(ledger: Ledger): [number, number] {
     const [salesRecord] = ledger.getSalesRecords();
