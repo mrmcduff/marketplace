@@ -1,14 +1,11 @@
-import { Good } from "./good";
-import { Wheat } from "./wheat";
+import { Good, Classification, GoodName } from "./good";
 
 export class Beer implements Good {
 
-  public name: string = 'beer';
-  public workerTurns: number = 6;
-  public absTurns: number = 1;
-  public requirements = new Map<string, number>([[Wheat.getName(), 2]]);
+  readonly name: string = 'beer';
+  readonly workerTurns: number = 6;
+  readonly absTurns: number = 1;
+  readonly requirements = new Map<GoodName, number>([['wheat', 2]]);
+  readonly classifications = [ Classification.Refined ];
 
-  public static getName(): string {
-    return 'beer';
-  }
 }
