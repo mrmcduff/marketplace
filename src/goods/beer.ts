@@ -6,6 +6,6 @@ export class Beer implements Good {
   readonly workerTurns: number = 6;
   readonly absTurns: number = 1;
   readonly requirements = new Map<GoodName, number>([['wheat', 2]]);
-  readonly classifications = [ Classification.Refined ];
+  readonly classifications = new Set<Classification>([Classification.Refined]);
 
 }

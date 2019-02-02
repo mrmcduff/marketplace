@@ -11,6 +11,6 @@ export interface Good {
   readonly name: string;
   readonly workerTurns: number;
   readonly absTurns: number;
-  readonly classifications: Classification[];
+  readonly classifications: Set<Classification>;
   readonly requirements: Map<GoodName, number>;
 }
