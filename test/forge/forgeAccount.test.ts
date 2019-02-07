@@ -1,4 +1,5 @@
 import { ForgeAccount, ForgeGoodData } from '../../src/forge';
+import { O_TRUNC } from 'constants';
 
 describe('ForgeAccount tests', () => {
 
@@ -28,5 +29,39 @@ describe('ForgeAccount tests', () => {
 
   it('Returns null when inquiring about an item not present', () => {
     expect(forgeAccount.inquire('beer')).toBeNull();
+  });
+
+  it('Adds a new item using raw add function when nothing is there', () => {
+    const goodData = forgeAccount.add('wheat', 3);
+    const inquireData = forgeAccount.inquire('wheat');
+    expect(goodData).toEqual(inquireData);
+    expect(goodData).not.toBe(inquireData);
+  });
+
+  it('Acts like add new item when index is not an integer', () => {
+    forgeAccount.add('wheat', 3);
+    forgeAccount.add('wheat', 5, 1.3);
+    const foundItem = forgeAccount.inquire('wheat');
+    expect(foundItem).toBeTruthy();
+    expect(foundItem.inProgress.length).toEqual(2);
+  });
+
+  it('Acts like add new item when index is higher than length', () => {
+    forgeAccount.add('beer', 5);
+    forgeAccount.add('beer', 3, 5);
+    const foundItem = forgeAccount.inquire('beer');
+    expect(foundItem).toBeTruthy();
+    expect(foundItem.inProgress.length).toEqual(2);
+  });
+
+  it('Adds when trying to update the 0th item', () => {
+    forgeAccount.add('beer', 4);
+    const resultingItem = forgeAccount.add('beer', 3, 0);
+    const foundItem = forgeAccount.inquire('beer');
+    expect(foundItem).toBeTruthy();
+    expect(foundItem.inProgress.length).toEqual(1);
+    expect(foundItem.inProgress[0].workerTurns).toEqual(7);
+    expect(resultingItem).toEqual(foundItem);
+    expect(resultingItem).not.toBe(foundItem);
   });
 });
