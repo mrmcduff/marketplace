@@ -4,4 +4,5 @@ export interface PartialGood {
   name: GoodName;
   workerTurns: number;
   completedTurns: number;
+  completedWorkerTurns: number;
 }

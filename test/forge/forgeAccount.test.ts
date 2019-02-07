@@ -64,4 +64,5 @@ describe('ForgeAccount tests', () => {
     expect(resultingItem).toEqual(foundItem);
     expect(resultingItem).not.toBe(foundItem);
   });
+
 });

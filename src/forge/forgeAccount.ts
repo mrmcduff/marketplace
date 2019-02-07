@@ -2,6 +2,7 @@ import { ForgeGoodData } from "./forgeGoodData";
 import { GoodName } from "../goods";
 import { copyForgeGoodData } from "./utils";
 import { PartialGood } from "./partialGood";
+import { HarvestRecord } from "./harvestRecord";
 
 export class ForgeAccount {
   readonly id: string;
@@ -48,6 +49,23 @@ export class ForgeAccount {
     return copyForgeGoodData(data);
   }
 
+  public harvest(): HarvestRecord {
+    const goods = new Map<GoodName, number>();
+    this.goodData.forEach((value, key, map) => {
+      value.completedUnits > 0;
+      goods.set(key, value.completedUnits);
+      value.completedUnits = 0;
+      map.set(key, value);
+    });
+    return { goods };
+  }
+
+  public takeTurn(): void {
+    this.goodData.forEach((value, key, map) => {
+
+    })
+  }
+
   private generateNewData(item: GoodName) : ForgeGoodData {
     return {
       name: item,
@@ -61,6 +79,7 @@ export class ForgeAccount {
       name: item,
       workerTurns: 0,
       completedTurns: 0,
+      completedWorkerTurns: 0,
     };
   }
 }
