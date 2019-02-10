@@ -9,6 +9,7 @@ describe('Good propery tests', () => {
     expect(wheat.requirements.size).toBe(0);
     expect(wheat.workerTurns).toEqual(3);
     expect(wheat.absTurns).toEqual(2);
+    expect(wheat.baseTraining).toEqual(2);
   });
 
   it('Has the correct properties for Beer', () => {
@@ -19,6 +20,7 @@ describe('Good propery tests', () => {
     expect(beer.requirements.get('wheat')).toBe(2);
     expect(beer.workerTurns).toEqual(6);
     expect(beer.absTurns).toEqual(1);
+    expect(beer.baseTraining).toEqual(4);
   });
 
   it('Has the correct properties for Dollars', () => {
@@ -28,5 +30,6 @@ describe('Good propery tests', () => {
     expect(dollar.requirements.size).toBe(0);
     expect(dollar.workerTurns).toEqual(0);
     expect(dollar.absTurns).toEqual(0);
+    expect(dollar.baseTraining).toEqual(0);
   });
 });
