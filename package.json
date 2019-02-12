@@ -32,7 +32,8 @@
     "@types/node": "^10.12.18",
     "mathjs": "^5.4.1",
     "nodemon": "^1.18.9",
-    "typescript": "^3.2.4"
+    "typescript": "^3.2.4",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "@types/jest": "^23.3.13",

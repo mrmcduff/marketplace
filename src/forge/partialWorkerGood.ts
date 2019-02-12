@@ -1,9 +1,8 @@
 import { GoodName } from "../goods";
-import { Worker } from "../workers";
 
 export interface PartialWorkerGood {
   name: GoodName;
-  workers: Worker[];
+  id: string;
   completedTurns: number;
   completedWorkerTurns: number;
 }
