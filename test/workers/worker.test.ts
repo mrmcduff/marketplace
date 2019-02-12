@@ -98,4 +98,28 @@ describe('Base worker functionality tests', () => {
     worker.decayExcept('beer');
     expect(worker.getDecayingCertifications().has('beer')).toBe(false);
   });
+
+  it('clones as expected', () => {
+    worker.addCertification('wheat');
+    worker.trainCertification('beer', 3);
+    worker.decayCertification('wheat');
+
+    const clone = worker.clone();
+    expect(clone).not.toBe(worker);
+    expect(clone.id).toEqual(worker.id);
+    expect(clone.decayFactor).toEqual(worker.decayFactor);
+    expect(clone.getCertifications()).toEqual(worker.getCertifications());
+    expect(clone.getCertifications()).not.toBe(worker.getCertifications());
+    expect(clone.getPartialCertifications()).toEqual(worker.getPartialCertifications());
+    expect(clone.getPartialCertifications()).not.toBe(worker.getPartialCertifications());
+    expect(clone.getDecayingCertifications()).toEqual(worker.getDecayingCertifications());
+    expect(clone.getDecayingCertifications()).not.toBe(worker.getDecayingCertifications());
+
+    worker.trainCertification('beer');
+    expect(clone.getPartialCertifications()).not.toEqual(worker.getPartialCertifications());
+    clone.decayCertification('wheat');
+    expect(clone.getDecayingCertifications()).not.toEqual(worker.getDecayingCertifications());
+    worker.addCertification('beer');
+    expect(clone.getCertifications()).not.toEqual(worker.getCertifications());
+  });
 });

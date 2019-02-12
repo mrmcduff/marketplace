@@ -3,9 +3,9 @@ import { GoodName, Beer, good } from "../goods";
 export class Worker {
   readonly id: string;
   readonly decayFactor: number;
-  private readonly certifications: Set<GoodName>;
-  private readonly partialCertifications: Map<GoodName, number>;
-  private readonly decayingCertifications: Map<GoodName, number>;
+  private certifications: Set<GoodName>;
+  private partialCertifications: Map<GoodName, number>;
+  private decayingCertifications: Map<GoodName, number>;
 
   constructor(id: string, decayFactor: number) {
     this.id = id;
@@ -13,6 +13,18 @@ export class Worker {
     this.certifications = new Set<GoodName>();
     this.partialCertifications = new Map<GoodName, number>();
     this.decayingCertifications = new Map<GoodName, number>();
+  }
+
+  clone(): Worker {
+    const worker = new Worker(this.id, this.decayFactor);
+    worker.copyCertifications(this.certifications, this.partialCertifications, this.decayingCertifications);
+    return worker;
+  }
+
+  private copyCertifications(certifications, partialCertifications, decayingCertifications) {
+    this.certifications = new Set<GoodName>(certifications);
+    this.partialCertifications = new Map<GoodName, number>(partialCertifications);
+    this.decayingCertifications = new Map<GoodName, number>(decayingCertifications);
   }
 
   addCertification(good: GoodName): void {
