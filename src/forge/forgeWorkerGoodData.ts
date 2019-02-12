@@ -28,7 +28,10 @@ export class ForgeWorkerGoodData {
   }
 
   public assignGroup(workers: string[], goodId?: string): boolean {
-    return true;
+    if (goodId) {
+      return this.assignToExisting(workers, goodId);
+    }
+    return this.assignToNew(workers);
   }
 
   public addWorkerInput(workerId: string, workerTurns: number): boolean {
