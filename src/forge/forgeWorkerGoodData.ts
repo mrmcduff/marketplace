@@ -65,7 +65,7 @@ export class ForgeWorkerGoodData {
   public removeWorkers(...workerIds: string[]) {
     workerIds.forEach(id => {
       this.partialMapByWorker.delete(id);
-    })
+    }, this);
   }
 
   public incrementTurn() {

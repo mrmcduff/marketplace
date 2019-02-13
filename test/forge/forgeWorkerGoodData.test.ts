@@ -27,10 +27,6 @@ describe('ForgeWorkerGoodData Functionality tests', () => {
     expect(workerAssignments.get('123abc')).toEqual('partial_id');
   });
 
-  it('Fails to add a worker to an assignment that doesn\'t exist', () => {
-    expect(forgeData.assign('123abc', '456def')).toBe(false);
-  });
-
   it('Adds multiple workers to default assignments', () => {
     createUuid.mockReturnValueOnce('foo');
     expect(forgeData.assignGroup(['workerOne', 'workerTwo'])).toBe(true);
@@ -48,4 +44,68 @@ describe('ForgeWorkerGoodData Functionality tests', () => {
     expect(workerAssignments.get('workerOne')).toEqual('foo');
     expect(workerAssignments.get('workerTwo')).toEqual('foo');
   });
+
+  it('Adds new workers to a default new assignmenet', () => {
+    createUuid.mockReturnValueOnce('first').mockReturnValueOnce('second');
+    // The assignment should succeed.
+    expect(forgeData.assign('123abc')).toBe(true);
+    expect(forgeData.assign('456def')).toBe(true);
+    const workerAssignments: Map<string, string> = forgeData.inquireWorkerAssignments();
+    const partialGoods: PartialWorkerGood[] = forgeData.inquirePartialGoods();
+    expect(partialGoods.length).toEqual(2);
+    expect(partialGoods[1]).toEqual({
+      name: 'wheat',
+      id: 'second',
+      completedTurns: 0,
+      completedWorkerTurns: 0,
+    });
+    expect(workerAssignments.get('123abc')).toEqual('first');
+    expect(workerAssignments.get('456def')).toEqual('second');
+  });
+
+  it('Adds a second worker to a specified, valid assignment', () => {
+    createUuid.mockReturnValueOnce('first');
+    expect(forgeData.assign('one')).toBe(true);
+    expect(forgeData.assign('two', 'first')).toBe(true);
+    const workerAssignments: Map<string, string> = forgeData.inquireWorkerAssignments();
+    const partialGoods: PartialWorkerGood[] = forgeData.inquirePartialGoods();
+    expect(partialGoods.length).toEqual(1);
+    expect(workerAssignments.get('one')).toEqual('first');
+    expect(workerAssignments.get('two')).toEqual('first');
+  });
+
+  it('Adds a group of workers to a specified, valid assignment', () => {
+    createUuid.mockReturnValueOnce('first');
+    expect(forgeData.assign('one')).toBe(true);
+    expect(forgeData.assignGroup(['two', 'three'], 'first')).toBe(true);
+    const workerAssignments: Map<string, string> = forgeData.inquireWorkerAssignments();
+    const partialGoods: PartialWorkerGood[] = forgeData.inquirePartialGoods();
+    expect(partialGoods.length).toEqual(1);
+    expect(workerAssignments.get('one')).toEqual('first');
+    expect(workerAssignments.get('two')).toEqual('first');
+    expect(workerAssignments.get('three')).toEqual('first');
+  });
+
+  it('Fails to add a worker to an assignment that doesn\'t exist', () => {
+    expect(forgeData.assign('123abc', '456def')).toBe(false);
+    expect(createUuid).not.toHaveBeenCalled();
+  });
+
+  it('Fails to add a group of workers to a nonexistent good id', () => {
+    expect(forgeData.assignGroup(['one', 'two'], 'notThereYet')).toBe(false);
+    expect(createUuid).not.toHaveBeenCalled();
+  });
+
+  it('Removes workers as specified', () => {
+    createUuid.mockReturnValueOnce('first');
+    forgeData.assignGroup(['one', 'two', 'three', 'four']);
+    expect(forgeData.removeWorker('one')).toBe(true);
+    forgeData.removeWorkers('two', 'three');
+    const workerAssignments: Map<string, string> = forgeData.inquireWorkerAssignments();
+    expect(workerAssignments.size).toEqual(1);
+    expect(workerAssignments.has('two')).toBe(false);
+    expect(workerAssignments.has('one')).toBe(false);
+    expect(workerAssignments.get('four')).toEqual('first');
+  });
+
 });
