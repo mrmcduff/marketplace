@@ -108,4 +108,49 @@ describe('ForgeWorkerGoodData Functionality tests', () => {
     expect(workerAssignments.get('four')).toEqual('first');
   });
 
+  it('Adds worker input', () => {
+    createUuid.mockReturnValueOnce('first');
+    forgeData.assign('one');
+    expect(forgeData.addWorkerInput('one', 2)).toBe(true);
+    const partialGoods: PartialWorkerGood[] = forgeData.inquirePartialGoods();
+    expect(partialGoods.length).toEqual(1);
+    expect(partialGoods[0]).toEqual({
+      name: 'wheat',
+      id: 'first',
+      completedTurns: 0,
+      completedWorkerTurns: 2,
+    });
+  });
+
+  it('Returns false from addWorkerInput if worker is not assigned', () => {
+    expect(forgeData.addWorkerInput('foo', 3)).toBe(false);
+    expect(forgeData.inquirePartialGoods().length).toEqual(0);
+  });
+
+  it('Increments a simple turn', () => {
+    createUuid.mockReturnValueOnce('first');
+    forgeData.assign('one');
+    forgeData.addWorkerInput('one', 2);
+    forgeData.incrementTurn();
+    const partialGoods: PartialWorkerGood[] = forgeData.inquirePartialGoods();
+    expect(partialGoods.length).toEqual(1);
+    expect(partialGoods[0]).toEqual({
+      name: 'wheat',
+      id: 'first',
+      completedTurns: 1,
+      completedWorkerTurns: 2,
+    });
+  });
+
+  it('Moves an item from partial to completed', () => {
+    createUuid.mockReturnValueOnce('first');
+    forgeData.assign('123abc');
+    forgeData.addWorkerInput('123abc', 10);
+    // It takes two turns to complete wheat.
+    forgeData.incrementTurn();
+    forgeData.incrementTurn();
+    const partialGoods: PartialWorkerGood[] = forgeData.inquirePartialGoods();
+    expect(partialGoods.length).toEqual(0);
+    expect(forgeData.getCompletedUnits()).toEqual(1);
+  });
 });

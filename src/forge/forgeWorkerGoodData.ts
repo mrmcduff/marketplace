@@ -39,9 +39,6 @@ export class ForgeWorkerGoodData {
       return false;
     }
     const partialGood = this.partialGoods[this.partialMapByWorker.get(workerId)];
-    if (!partialGood) {
-      return false;
-    }
     partialGood.completedWorkerTurns += workerTurns;
     return true;
   }
@@ -68,7 +65,11 @@ export class ForgeWorkerGoodData {
     }, this);
   }
 
-  public incrementTurn() {
+  public getCompletedUnits(): number {
+    return this.completedUnits;
+  }
+
+  public incrementTurn(): void {
     const goodInstance: Good = good(this.name);
     this.partialGoods.forEach(partial => partial.completedTurns += 1);
     const completed = this.partialGoods.filter(partial => {
@@ -102,6 +103,7 @@ export class ForgeWorkerGoodData {
 
       // Now we can fully convert
       this.partialGoods = inProgress;
+      this.completedUnits += completed.length;
     }
   }
 
