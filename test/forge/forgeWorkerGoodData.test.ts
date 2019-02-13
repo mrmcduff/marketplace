@@ -1,5 +1,6 @@
 import { ForgeWorkerGoodData } from '../../src/forge/forgeWorkerGoodData';
 import { PartialWorkerGood } from '../../src/forge/partialWorkerGood';
+import { worker } from 'cluster';
 
 describe('ForgeWorkerGoodData Functionality tests', () => {
 
@@ -152,5 +153,48 @@ describe('ForgeWorkerGoodData Functionality tests', () => {
     const partialGoods: PartialWorkerGood[] = forgeData.inquirePartialGoods();
     expect(partialGoods.length).toEqual(0);
     expect(forgeData.getCompletedUnits()).toEqual(1);
+  });
+
+  it('Clones the item as expected', () => {
+    createUuid.mockReturnValueOnce('first');
+    forgeData.assign('123abc');
+    forgeData.addWorkerInput('123abc', 10);
+    // It takes two turns to complete wheat.
+    forgeData.incrementTurn();
+    forgeData.incrementTurn();
+    forgeData.assign('123abc');
+    forgeData.addWorkerInput('123abc', 2);
+
+    const extraForgeData = forgeData.clone();
+    expect(forgeData).not.toBe(extraForgeData);
+    expect(forgeData.inquirePartialGoods()).not.toBe(extraForgeData.inquirePartialGoods());
+  });
+
+  it('Reindexes the partial goods properly', () => {
+    createUuid
+      .mockReturnValueOnce('first')
+      .mockReturnValueOnce('second')
+      .mockReturnValueOnce('third');
+    forgeData.assign('one');
+    forgeData.assign('two');
+    forgeData.assign('three');
+    let partialGoods: PartialWorkerGood[] = forgeData.inquirePartialGoods();
+    let workerAssignments: Map<string, string> = forgeData.inquireWorkerAssignments();
+
+    expect(partialGoods.length).toEqual(3);
+    expect(workerAssignments.get('one')).toEqual('first');
+    expect(workerAssignments.get('two')).toEqual('second');
+    expect(workerAssignments.get('three')).toEqual('third');
+
+    forgeData.addWorkerInput('two', 10);
+    forgeData.incrementTurn();
+    forgeData.incrementTurn();
+    partialGoods = forgeData.inquirePartialGoods();
+    workerAssignments = forgeData.inquireWorkerAssignments();
+
+    expect(partialGoods.length).toEqual(2);
+    expect(workerAssignments.get('one')).toEqual('first');
+    expect(workerAssignments.get('three')).toEqual('third');
+    expect(workerAssignments.has('two')).toBe(false);
   });
 });
