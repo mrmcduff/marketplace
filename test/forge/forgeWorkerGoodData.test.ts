@@ -141,6 +141,7 @@ describe('ForgeWorkerGoodData Functionality tests', () => {
       completedTurns: 1,
       completedWorkerTurns: 2,
     });
+    expect(forgeData.getCompletedUnits()).toEqual(0);
   });
 
   it('Moves an item from partial to completed', () => {
