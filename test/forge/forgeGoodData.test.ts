@@ -1,15 +1,14 @@
-import { ForgeWorkerGoodData } from '../../src/forge/forgeWorkerGoodData';
-import { PartialWorkerGood } from '../../src/forge/partialWorkerGood';
-import { worker } from 'cluster';
+import { ForgeGoodData } from '../../src/forge/forgeGoodData';
+import { PartialGood } from '../../src/forge/partialGood';
 
 describe('ForgeWorkerGoodData Functionality tests', () => {
 
   let createUuid;
-  let forgeData: ForgeWorkerGoodData;
+  let forgeData: ForgeGoodData;
 
   beforeEach(() => {
     createUuid = jest.fn();
-    forgeData = new ForgeWorkerGoodData('wheat', createUuid);
+    forgeData = new ForgeGoodData('wheat', createUuid);
   });
 
   it('Adds a worker to a default assignment', () => {
@@ -17,7 +16,7 @@ describe('ForgeWorkerGoodData Functionality tests', () => {
     // The assignment should succeed.
     expect(forgeData.assign('123abc')).toBe(true);
     const workerAssignments: Map<string, string> = forgeData.inquireWorkerAssignments();
-    const partialGoods: PartialWorkerGood[] = forgeData.inquirePartialGoods();
+    const partialGoods: PartialGood[] = forgeData.inquirePartialGoods();
     expect(partialGoods.length).toEqual(1);
     expect(partialGoods[0]).toEqual({
       name: 'wheat',
@@ -33,7 +32,7 @@ describe('ForgeWorkerGoodData Functionality tests', () => {
     expect(forgeData.assignGroup(['workerOne', 'workerTwo'])).toBe(true);
     expect(createUuid).toHaveBeenCalledTimes(1);
     const workerAssignments: Map<string, string> = forgeData.inquireWorkerAssignments();
-    const partialGoods: PartialWorkerGood[] = forgeData.inquirePartialGoods();
+    const partialGoods: PartialGood[] = forgeData.inquirePartialGoods();
     expect(partialGoods.length).toEqual(1);
     expect(partialGoods[0]).toEqual({
       name: 'wheat',
@@ -52,7 +51,7 @@ describe('ForgeWorkerGoodData Functionality tests', () => {
     expect(forgeData.assign('123abc')).toBe(true);
     expect(forgeData.assign('456def')).toBe(true);
     const workerAssignments: Map<string, string> = forgeData.inquireWorkerAssignments();
-    const partialGoods: PartialWorkerGood[] = forgeData.inquirePartialGoods();
+    const partialGoods: PartialGood[] = forgeData.inquirePartialGoods();
     expect(partialGoods.length).toEqual(2);
     expect(partialGoods[1]).toEqual({
       name: 'wheat',
@@ -69,7 +68,7 @@ describe('ForgeWorkerGoodData Functionality tests', () => {
     expect(forgeData.assign('one')).toBe(true);
     expect(forgeData.assign('two', 'first')).toBe(true);
     const workerAssignments: Map<string, string> = forgeData.inquireWorkerAssignments();
-    const partialGoods: PartialWorkerGood[] = forgeData.inquirePartialGoods();
+    const partialGoods: PartialGood[] = forgeData.inquirePartialGoods();
     expect(partialGoods.length).toEqual(1);
     expect(workerAssignments.get('one')).toEqual('first');
     expect(workerAssignments.get('two')).toEqual('first');
@@ -80,7 +79,7 @@ describe('ForgeWorkerGoodData Functionality tests', () => {
     expect(forgeData.assign('one')).toBe(true);
     expect(forgeData.assignGroup(['two', 'three'], 'first')).toBe(true);
     const workerAssignments: Map<string, string> = forgeData.inquireWorkerAssignments();
-    const partialGoods: PartialWorkerGood[] = forgeData.inquirePartialGoods();
+    const partialGoods: PartialGood[] = forgeData.inquirePartialGoods();
     expect(partialGoods.length).toEqual(1);
     expect(workerAssignments.get('one')).toEqual('first');
     expect(workerAssignments.get('two')).toEqual('first');
@@ -113,7 +112,7 @@ describe('ForgeWorkerGoodData Functionality tests', () => {
     createUuid.mockReturnValueOnce('first');
     forgeData.assign('one');
     expect(forgeData.addWorkerInput('one', 2)).toBe(true);
-    const partialGoods: PartialWorkerGood[] = forgeData.inquirePartialGoods();
+    const partialGoods: PartialGood[] = forgeData.inquirePartialGoods();
     expect(partialGoods.length).toEqual(1);
     expect(partialGoods[0]).toEqual({
       name: 'wheat',
@@ -133,7 +132,7 @@ describe('ForgeWorkerGoodData Functionality tests', () => {
     forgeData.assign('one');
     forgeData.addWorkerInput('one', 2);
     forgeData.incrementTurn();
-    const partialGoods: PartialWorkerGood[] = forgeData.inquirePartialGoods();
+    const partialGoods: PartialGood[] = forgeData.inquirePartialGoods();
     expect(partialGoods.length).toEqual(1);
     expect(partialGoods[0]).toEqual({
       name: 'wheat',
@@ -151,7 +150,7 @@ describe('ForgeWorkerGoodData Functionality tests', () => {
     // It takes two turns to complete wheat.
     forgeData.incrementTurn();
     forgeData.incrementTurn();
-    const partialGoods: PartialWorkerGood[] = forgeData.inquirePartialGoods();
+    const partialGoods: PartialGood[] = forgeData.inquirePartialGoods();
     expect(partialGoods.length).toEqual(0);
     expect(forgeData.getCompletedUnits()).toEqual(1);
   });
@@ -179,7 +178,7 @@ describe('ForgeWorkerGoodData Functionality tests', () => {
     forgeData.assign('one');
     forgeData.assign('two');
     forgeData.assign('three');
-    let partialGoods: PartialWorkerGood[] = forgeData.inquirePartialGoods();
+    let partialGoods: PartialGood[] = forgeData.inquirePartialGoods();
     let workerAssignments: Map<string, string> = forgeData.inquireWorkerAssignments();
 
     expect(partialGoods.length).toEqual(3);

@@ -1,16 +1,19 @@
 import { GoodName } from "../goods";
-import { ForgeWorkerGoodData } from "./forgeWorkerGoodData";
+import { ForgeGoodData } from "./forgeGoodData";
 import { Worker } from "../workers";
 
 export type WorkerAssignment = GoodName | 'none';
+
 /**
  * Represents the worker-based version of forge accounts.
  * Planned to replace ForgeAccounts.
  */
-export class ForgeWorkerAccount {
+export class ForgeAccount {
+
+  // TODO: Still need the ability to assign workers to specific partial goods
 
   readonly id: string;
-  private readonly goodData: Map<GoodName, ForgeWorkerGoodData>;
+  private readonly goodData: Map<GoodName, ForgeGoodData>;
   private readonly workers: Worker[];
   private readonly assignments: Map<string, WorkerAssignment>;
   private createUuid: () => string;
@@ -19,7 +22,7 @@ export class ForgeWorkerAccount {
     createUuid: () => string) {
     this.id = id;
     this.createUuid = createUuid;
-    this.goodData = new Map<GoodName, ForgeWorkerGoodData>();
+    this.goodData = new Map<GoodName, ForgeGoodData>();
     this.workers = [];
   }
 
@@ -46,7 +49,7 @@ export class ForgeWorkerAccount {
     let removeIndex = -1;
     let removeWorker: Worker = null;
     let assignment: WorkerAssignment;
-    let goodWorkerData: ForgeWorkerGoodData;
+    let goodWorkerData: ForgeGoodData;
     toRemove.forEach(removableId => {
       removeIndex = this.workers.findIndex(wrkr => wrkr.id === removableId);
       if (removeIndex >= 0) {
@@ -73,8 +76,9 @@ export class ForgeWorkerAccount {
         return;
       }
 
-      // Need to get a ForgeTurnStrategy & AccountTrainingStrategy here to get the worker output
+      // TODO Need to get a ForgeTurnStrategy & AccountTrainingStrategy here to get the worker output
       // And also update the worker's training/decay.
+      forgeGoodData.addWorkerInput(emp.id, 1);
     });
   }
 
@@ -82,7 +86,7 @@ export class ForgeWorkerAccount {
     return this.workers.map<Worker>(worker => worker.clone());
   }
 
-  public inquireGoodData(item: GoodName) : ForgeWorkerGoodData {
+  public inquireGoodData(item: GoodName) : ForgeGoodData {
     const data = this.goodData.get(item);
     if (!data) {
       return null;
@@ -108,7 +112,7 @@ export class ForgeWorkerAccount {
     existingData.assign(workerId);
   }
 
-  private createWorkerGoodData(name: GoodName): ForgeWorkerGoodData {
-    return new ForgeWorkerGoodData(name, this.createUuid);
+  private createWorkerGoodData(name: GoodName): ForgeGoodData {
+    return new ForgeGoodData(name, this.createUuid);
   }
 }

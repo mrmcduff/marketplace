@@ -1,6 +1,6 @@
 import { GoodName } from "../goods";
 
-export interface PartialWorkerGood {
+export interface PartialGood {
   name: GoodName;
   id: string;
   completedTurns: number;

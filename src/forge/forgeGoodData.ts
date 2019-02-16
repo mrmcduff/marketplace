@@ -1,10 +1,10 @@
 import { GoodName, good, Good } from "../goods";
-import { PartialWorkerGood } from "./partialWorkerGood";
+import { PartialGood } from "./partialGood";
 
-export class ForgeWorkerGoodData {
+export class ForgeGoodData {
   readonly name: GoodName;
   private completedUnits: number;
-  private partialGoods: PartialWorkerGood[];
+  private partialGoods: PartialGood[];
   private partialMapByWorker: Map<string, number>;
   private partialMapById: Map<string, number>;
 
@@ -43,7 +43,7 @@ export class ForgeWorkerGoodData {
     return true;
   }
 
-  public inquirePartialGoods(): PartialWorkerGood[] {
+  public inquirePartialGoods(): PartialGood[] {
     return [...this.partialGoods];
   }
 
@@ -129,7 +129,7 @@ export class ForgeWorkerGoodData {
     return true;
   }
 
-  private generateNewPartialGood(): PartialWorkerGood {
+  private generateNewPartialGood(): PartialGood {
     return {
       name: this.name,
       id: this.createUuid(),
@@ -138,30 +138,30 @@ export class ForgeWorkerGoodData {
     };
   }
 
-  public clone(): ForgeWorkerGoodData {
-    return new ForgeWorkerGoodData(this.name, this.createUuid)
+  public clone(): ForgeGoodData {
+    return new ForgeGoodData(this.name, this.createUuid)
       .setCompletedUnits(this.completedUnits)
       .setPartialMapByWorker(this.partialMapByWorker)
       .setPartialMapById(this.partialMapById)
       .setPartialGoods(this.partialGoods);
   }
 
-  private setCompletedUnits(units: number): ForgeWorkerGoodData {
+  private setCompletedUnits(units: number): ForgeGoodData {
     this.completedUnits = units;
     return this;
   }
 
-  private setPartialGoods(goods: PartialWorkerGood[]): ForgeWorkerGoodData {
+  private setPartialGoods(goods: PartialGood[]): ForgeGoodData {
     this.partialGoods = [...goods];
     return this;
   }
 
-  private setPartialMapByWorker(partialMap: Map<string, number>): ForgeWorkerGoodData {
+  private setPartialMapByWorker(partialMap: Map<string, number>): ForgeGoodData {
     this.partialMapByWorker = new Map(partialMap);
     return this;
   }
 
-  private setPartialMapById(partialMap: Map<string, number>): ForgeWorkerGoodData {
+  private setPartialMapById(partialMap: Map<string, number>): ForgeGoodData {
     this.partialMapById = new Map(partialMap);
     return this;
   }
