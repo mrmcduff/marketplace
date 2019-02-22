@@ -5,7 +5,7 @@ export class ForgeGoodData {
   readonly name: GoodName;
   private completedUnits: number;
   private partialGoods: PartialGood[];
-  private partialMapByWorker: Map<string, number>;
+  private partialMapBySim: Map<string, number>;
   private partialMapById: Map<string, number>;
 
   private createUuid: () => string;
@@ -15,31 +15,31 @@ export class ForgeGoodData {
     this.name = name;
     this.completedUnits = 0;
     this.partialGoods = [];
-    this.partialMapByWorker = new Map<string, number>();
+    this.partialMapBySim = new Map<string, number>();
     this.partialMapById = new Map<string, number>();
     this.createUuid = createUuid;
   }
 
-  public assign(workerId: string, goodId?: string): boolean {
+  public assign(simId: string, goodId?: string): boolean {
     if (goodId) {
-      return this.assignToExisting([workerId], goodId);
+      return this.assignToExisting([simId], goodId);
     }
-    return this.assignToNew([workerId]);
+    return this.assignToNew([simId]);
   }
 
-  public assignGroup(workers: string[], goodId?: string): boolean {
+  public assignGroup(sims: string[], goodId?: string): boolean {
     if (goodId) {
-      return this.assignToExisting(workers, goodId);
+      return this.assignToExisting(sims, goodId);
     }
-    return this.assignToNew(workers);
+    return this.assignToNew(sims);
   }
 
-  public addWorkerInput(workerId: string, workerTurns: number): boolean {
-    if (!this.partialMapByWorker.has(workerId)) {
+  public addSimInput(simId: string, simTurns: number): boolean {
+    if (!this.partialMapBySim.has(simId)) {
       return false;
     }
-    const partialGood = this.partialGoods[this.partialMapByWorker.get(workerId)];
-    partialGood.completedWorkerTurns += workerTurns;
+    const partialGood = this.partialGoods[this.partialMapBySim.get(simId)];
+    partialGood.completedSimTurns += simTurns;
     return true;
   }
 
@@ -47,21 +47,21 @@ export class ForgeGoodData {
     return [...this.partialGoods];
   }
 
-  public inquireWorkerAssignments(): Map<string, string> {
-    const workerToGoodIdMap = new Map<string, string>();
-    this.partialMapByWorker.forEach((index, workerId) => {
-      workerToGoodIdMap.set(workerId, this.partialGoods[index].id);
+  public inquireSimAssignments(): Map<string, string> {
+    const simToGoodIdMap = new Map<string, string>();
+    this.partialMapBySim.forEach((index, simId) => {
+      simToGoodIdMap.set(simId, this.partialGoods[index].id);
     }, this);
-    return workerToGoodIdMap;
+    return simToGoodIdMap;
   }
 
-  public removeWorker(workerId: string): boolean {
-    return this.partialMapByWorker.delete(workerId);
+  public removeSim(simId: string): boolean {
+    return this.partialMapBySim.delete(simId);
   }
 
-  public removeWorkers(...workerIds: string[]) {
-    workerIds.forEach(id => {
-      this.partialMapByWorker.delete(id);
+  public removeSims(...simIds: string[]) {
+    simIds.forEach(id => {
+      this.partialMapBySim.delete(id);
     }, this);
   }
 
@@ -74,20 +74,20 @@ export class ForgeGoodData {
     this.partialGoods.forEach(partial => partial.completedTurns += 1);
     const completed = this.partialGoods.filter(partial => {
       return (partial.completedTurns >= goodInstance.absTurns &&
-        partial.completedWorkerTurns >= goodInstance.workerTurns);
+        partial.completedSimTurns >= goodInstance.simTurns);
     });
 
     // If completed length is > 0, then we need to remove them from the records.
     if(completed.length > 0) {
       const inProgress = this.partialGoods.filter(partial => {
         return (partial.completedTurns < goodInstance.absTurns ||
-          partial.completedWorkerTurns < goodInstance.workerTurns);
+          partial.completedSimTurns < goodInstance.simTurns);
       });
       const removedIndices: number[] = completed.map(completePartial => this.partialMapById.get(completePartial.id));
       completed.forEach(completedPartial => { this.partialMapById.delete(completedPartial.id) }, this);
-      this.partialMapByWorker.forEach( (index, workerId, map) => {
+      this.partialMapBySim.forEach( (index, simId, map) => {
         if (removedIndices.includes(index)) {
-          map.delete(workerId);
+          map.delete(simId);
         }
       }, this);
 
@@ -97,8 +97,8 @@ export class ForgeGoodData {
         changedIndices.set(this.partialMapById.get(partial.id), index);
         this.partialMapById.set(partial.id, index);
       }, this);
-      this.partialMapByWorker.forEach((index, workerId, map) => {
-        map.set(workerId, changedIndices.get(index));
+      this.partialMapBySim.forEach((index, simId, map) => {
+        map.set(simId, changedIndices.get(index));
       });
 
       // Now we can fully convert
@@ -107,24 +107,24 @@ export class ForgeGoodData {
     }
   }
 
-  private assignToExisting(workerIds: string[], goodId: string): boolean {
+  private assignToExisting(simIds: string[], goodId: string): boolean {
     if (!this.partialMapById.has(goodId)) {
       return false;
     }
 
-    workerIds.forEach(id => {
-      this.partialMapByWorker.set(id, this.partialMapById.get(goodId));
+    simIds.forEach(id => {
+      this.partialMapBySim.set(id, this.partialMapById.get(goodId));
     }, this);
     return true;
   }
 
-  private assignToNew(workerIds: string[]) : boolean {
+  private assignToNew(simIds: string[]) : boolean {
     const partialGood = this.generateNewPartialGood();
     // Push returns the number of elements in the array.
     const index = this.partialGoods.push(partialGood) - 1;
     this.partialMapById.set(partialGood.id, index);
-    workerIds.forEach(id => {
-      this.partialMapByWorker.set(id, index);
+    simIds.forEach(id => {
+      this.partialMapBySim.set(id, index);
     }, this);
     return true;
   }
@@ -134,14 +134,14 @@ export class ForgeGoodData {
       name: this.name,
       id: this.createUuid(),
       completedTurns: 0,
-      completedWorkerTurns: 0,
+      completedSimTurns: 0,
     };
   }
 
   public clone(): ForgeGoodData {
     return new ForgeGoodData(this.name, this.createUuid)
       .setCompletedUnits(this.completedUnits)
-      .setPartialMapByWorker(this.partialMapByWorker)
+      .setPartialMapBySim(this.partialMapBySim)
       .setPartialMapById(this.partialMapById)
       .setPartialGoods(this.partialGoods);
   }
@@ -156,8 +156,8 @@ export class ForgeGoodData {
     return this;
   }
 
-  private setPartialMapByWorker(partialMap: Map<string, number>): ForgeGoodData {
-    this.partialMapByWorker = new Map(partialMap);
+  private setPartialMapBySim(partialMap: Map<string, number>): ForgeGoodData {
+    this.partialMapBySim = new Map(partialMap);
     return this;
   }
 

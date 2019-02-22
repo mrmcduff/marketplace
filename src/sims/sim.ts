@@ -1,6 +1,6 @@
-import { GoodName, Beer, good } from "../goods";
+import { GoodName, good } from "../goods";
 
-export class Worker {
+export class Sim {
   readonly id: string;
   readonly decayFactor: number;
   private certifications: Set<GoodName>;
@@ -15,10 +15,10 @@ export class Worker {
     this.decayingCertifications = new Map<GoodName, number>();
   }
 
-  clone(): Worker {
-    const worker = new Worker(this.id, this.decayFactor);
-    worker.copyCertifications(this.certifications, this.partialCertifications, this.decayingCertifications);
-    return worker;
+  clone(): Sim {
+    const sim = new Sim(this.id, this.decayFactor);
+    sim.copyCertifications(this.certifications, this.partialCertifications, this.decayingCertifications);
+    return sim;
   }
 
   private copyCertifications(certifications, partialCertifications, decayingCertifications) {
@@ -52,7 +52,7 @@ export class Worker {
   }
 
   /**
-   * Train the worker on a certification.
+   * Train the sim on a certification.
    *
    * @param goodName The name of the good to train on
    * @param amount The amount of training turns to add
@@ -76,7 +76,7 @@ export class Worker {
   }
 
   /**
-   * Decay the worker's certification.
+   * Decay the sim's certification.
    *
    * @param goodName The name of the good certification to decay
    * @param amount The amount to decay the certification

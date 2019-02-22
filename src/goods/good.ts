@@ -9,7 +9,7 @@ export type GoodName = 'beer' | 'wheat' | 'dollar';
 
 export interface Good {
   readonly name: GoodName;
-  readonly workerTurns: number;
+  readonly simTurns: number;
   readonly absTurns: number;
   readonly baseTraining: number;
   readonly classifications: Set<Classification>;

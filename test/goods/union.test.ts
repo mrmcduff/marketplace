@@ -7,7 +7,7 @@ describe('Good propery tests', () => {
     expect(wheat.classifications).toContain(Classification.Raw);
     expect(wheat.name).toEqual('wheat');
     expect(wheat.requirements.size).toBe(0);
-    expect(wheat.workerTurns).toEqual(3);
+    expect(wheat.simTurns).toEqual(3);
     expect(wheat.absTurns).toEqual(2);
     expect(wheat.baseTraining).toEqual(2);
   });
@@ -18,7 +18,7 @@ describe('Good propery tests', () => {
     expect(beer.name).toEqual('beer');
     expect(beer.requirements.size).toBe(1);
     expect(beer.requirements.get('wheat')).toBe(2);
-    expect(beer.workerTurns).toEqual(6);
+    expect(beer.simTurns).toEqual(6);
     expect(beer.absTurns).toEqual(1);
     expect(beer.baseTraining).toEqual(4);
   });
@@ -28,7 +28,7 @@ describe('Good propery tests', () => {
     expect(dollar.classifications).toContain(Classification.Currency);
     expect(dollar.name).toEqual('dollar');
     expect(dollar.requirements.size).toBe(0);
-    expect(dollar.workerTurns).toEqual(0);
+    expect(dollar.simTurns).toEqual(0);
     expect(dollar.absTurns).toEqual(0);
     expect(dollar.baseTraining).toEqual(0);
   });

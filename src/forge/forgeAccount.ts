@@ -1,21 +1,21 @@
 import { GoodName } from "../goods";
 import { ForgeGoodData } from "./forgeGoodData";
-import { Worker } from "../workers";
+import { Sim } from "../sims";
 
-export type WorkerAssignment = GoodName | 'none';
+export type SimAssignment = GoodName | 'none';
 
 /**
- * Represents the worker-based version of forge accounts.
+ * Represents the sim-based version of forge accounts.
  * Planned to replace ForgeAccounts.
  */
 export class ForgeAccount {
 
-  // TODO: Still need the ability to assign workers to specific partial goods
+  // TODO: Still need the ability to assign sims to specific partial goods
 
   readonly id: string;
   private readonly goodData: Map<GoodName, ForgeGoodData>;
-  private readonly workers: Worker[];
-  private readonly assignments: Map<string, WorkerAssignment>;
+  private readonly sims: Sim[];
+  private readonly assignments: Map<string, SimAssignment>;
   private createUuid: () => string;
 
   constructor(id: string,
@@ -23,49 +23,49 @@ export class ForgeAccount {
     this.id = id;
     this.createUuid = createUuid;
     this.goodData = new Map<GoodName, ForgeGoodData>();
-    this.workers = [];
+    this.sims = [];
   }
 
-  public addWorkers(employees: Worker[], assignment?: WorkerAssignment) {
-    const empAssignment: WorkerAssignment = assignment ? assignment : 'none';
+  public addSims(employees: Sim[], assignment?: SimAssignment) {
+    const empAssignment: SimAssignment = assignment ? assignment : 'none';
     employees.forEach(emp => {
-      this.workers.push(emp);
-      this.assignWorker(emp.id, empAssignment);
+      this.sims.push(emp);
+      this.assignSim(emp.id, empAssignment);
     });
   }
   
-  public assignWorker(workerId: string, assignment: WorkerAssignment) {
-    const foundWorker: Worker = this.workers.find(wrk => wrk.id === workerId);
-    if (foundWorker) {
-      this.removeAssignment(foundWorker.id);
-      this.assignments.set(foundWorker.id, assignment);
+  public assignSim(simId: string, assignment: SimAssignment) {
+    const foundSim: Sim = this.sims.find(wrk => wrk.id === simId);
+    if (foundSim) {
+      this.removeAssignment(foundSim.id);
+      this.assignments.set(foundSim.id, assignment);
       if (assignment !== 'none') {
-        this.addWorkerToGoodData(foundWorker.id, assignment);
+        this.addSimToGoodData(foundSim.id, assignment);
       }
     }
   }
 
-  public removeWorkers(...toRemove: string[]) {
+  public removeSims(...toRemove: string[]) {
     let removeIndex = -1;
-    let removeWorker: Worker = null;
-    let assignment: WorkerAssignment;
-    let goodWorkerData: ForgeGoodData;
+    let removeSim: Sim = null;
+    let assignment: SimAssignment;
+    let goodSimData: ForgeGoodData;
     toRemove.forEach(removableId => {
-      removeIndex = this.workers.findIndex(wrkr => wrkr.id === removableId);
+      removeIndex = this.sims.findIndex(wrkr => wrkr.id === removableId);
       if (removeIndex >= 0) {
-        [removeWorker] = this.workers.splice(removeIndex);
-        assignment = this.assignments.get(removeWorker.id) || 'none';
-        this.assignments.delete(removeWorker.id);
+        [removeSim] = this.sims.splice(removeIndex);
+        assignment = this.assignments.get(removeSim.id) || 'none';
+        this.assignments.delete(removeSim.id);
         if (assignment !== 'none') {
-          goodWorkerData = this.goodData.get(assignment);
-          goodWorkerData.removeWorker(removeWorker.id);
+          goodSimData = this.goodData.get(assignment);
+          goodSimData.removeSim(removeSim.id);
         }
       }
     });
   }
 
   public incrementTurn(): void {
-    this.workers.forEach(emp => {
+    this.sims.forEach(emp => {
       const assignment = this.assignments.get(emp.id);
       if (!assignment || assignment === 'none') {
         return;
@@ -76,14 +76,14 @@ export class ForgeAccount {
         return;
       }
 
-      // TODO Need to get a ForgeTurnStrategy & AccountTrainingStrategy here to get the worker output
-      // And also update the worker's training/decay.
-      forgeGoodData.addWorkerInput(emp.id, 1);
+      // TODO Need to get a ForgeTurnStrategy & AccountTrainingStrategy here to get the sim output
+      // And also update the sims's training/decay.
+      forgeGoodData.addSimInput(emp.id, 1);
     });
   }
 
-  public inquireWorkers(): Worker[] {
-    return this.workers.map<Worker>(worker => worker.clone());
+  public inquireSims(): Sim[] {
+    return this.sims.map<Sim>(sim => sim.clone());
   }
 
   public inquireGoodData(item: GoodName) : ForgeGoodData {
@@ -94,25 +94,25 @@ export class ForgeAccount {
     return data.clone();
   }
 
-  private removeAssignment(workerId: string) {
-    const previousAssignment = this.assignments.get(workerId);
+  private removeAssignment(simId: string) {
+    const previousAssignment = this.assignments.get(simId);
     if (previousAssignment !== 'none') {
       const previousGoodData = this.goodData.get(previousAssignment);
       if (previousGoodData) {
-        previousGoodData.removeWorker(workerId);
+        previousGoodData.removeSim(simId);
       }
     }
   }
 
-  private addWorkerToGoodData(workerId: string, name: GoodName) {
+  private addSimToGoodData(simId: string, name: GoodName) {
     let existingData = this.goodData.get(name);
     if (!existingData) {
-      existingData = this.createWorkerGoodData(name);
+      existingData = this.createForgeGoodData(name);
     }
-    existingData.assign(workerId);
+    existingData.assign(simId);
   }
 
-  private createWorkerGoodData(name: GoodName): ForgeGoodData {
+  private createForgeGoodData(name: GoodName): ForgeGoodData {
     return new ForgeGoodData(name, this.createUuid);
   }
 }

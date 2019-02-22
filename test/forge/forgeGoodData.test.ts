@@ -1,7 +1,7 @@
 import { ForgeGoodData } from '../../src/forge/forgeGoodData';
 import { PartialGood } from '../../src/forge/partialGood';
 
-describe('ForgeWorkerGoodData Functionality tests', () => {
+describe('ForgeGoodData Functionality tests', () => {
 
   let createUuid;
   let forgeData: ForgeGoodData;
@@ -11,126 +11,126 @@ describe('ForgeWorkerGoodData Functionality tests', () => {
     forgeData = new ForgeGoodData('wheat', createUuid);
   });
 
-  it('Adds a worker to a default assignment', () => {
+  it('Adds a sim to a default assignment', () => {
     createUuid.mockReturnValueOnce('partial_id');
     // The assignment should succeed.
     expect(forgeData.assign('123abc')).toBe(true);
-    const workerAssignments: Map<string, string> = forgeData.inquireWorkerAssignments();
+    const simAssignments: Map<string, string> = forgeData.inquireSimAssignments();
     const partialGoods: PartialGood[] = forgeData.inquirePartialGoods();
     expect(partialGoods.length).toEqual(1);
     expect(partialGoods[0]).toEqual({
       name: 'wheat',
       id: 'partial_id',
       completedTurns: 0,
-      completedWorkerTurns: 0,
+      completedSimTurns: 0,
     });
-    expect(workerAssignments.get('123abc')).toEqual('partial_id');
+    expect(simAssignments.get('123abc')).toEqual('partial_id');
   });
 
-  it('Adds multiple workers to default assignments', () => {
+  it('Adds multiple sims to default assignments', () => {
     createUuid.mockReturnValueOnce('foo');
     expect(forgeData.assignGroup(['workerOne', 'workerTwo'])).toBe(true);
     expect(createUuid).toHaveBeenCalledTimes(1);
-    const workerAssignments: Map<string, string> = forgeData.inquireWorkerAssignments();
+    const simAssignments: Map<string, string> = forgeData.inquireSimAssignments();
     const partialGoods: PartialGood[] = forgeData.inquirePartialGoods();
     expect(partialGoods.length).toEqual(1);
     expect(partialGoods[0]).toEqual({
       name: 'wheat',
       id: 'foo',
       completedTurns: 0,
-      completedWorkerTurns: 0,
+      completedSimTurns: 0,
     });
-    expect(workerAssignments.size).toEqual(2);
-    expect(workerAssignments.get('workerOne')).toEqual('foo');
-    expect(workerAssignments.get('workerTwo')).toEqual('foo');
+    expect(simAssignments.size).toEqual(2);
+    expect(simAssignments.get('workerOne')).toEqual('foo');
+    expect(simAssignments.get('workerTwo')).toEqual('foo');
   });
 
-  it('Adds new workers to a default new assignmenet', () => {
+  it('Adds new sims to a default new assignmenet', () => {
     createUuid.mockReturnValueOnce('first').mockReturnValueOnce('second');
     // The assignment should succeed.
     expect(forgeData.assign('123abc')).toBe(true);
     expect(forgeData.assign('456def')).toBe(true);
-    const workerAssignments: Map<string, string> = forgeData.inquireWorkerAssignments();
+    const simAssignments: Map<string, string> = forgeData.inquireSimAssignments();
     const partialGoods: PartialGood[] = forgeData.inquirePartialGoods();
     expect(partialGoods.length).toEqual(2);
     expect(partialGoods[1]).toEqual({
       name: 'wheat',
       id: 'second',
       completedTurns: 0,
-      completedWorkerTurns: 0,
+      completedSimTurns: 0,
     });
-    expect(workerAssignments.get('123abc')).toEqual('first');
-    expect(workerAssignments.get('456def')).toEqual('second');
+    expect(simAssignments.get('123abc')).toEqual('first');
+    expect(simAssignments.get('456def')).toEqual('second');
   });
 
-  it('Adds a second worker to a specified, valid assignment', () => {
+  it('Adds a second sim to a specified, valid assignment', () => {
     createUuid.mockReturnValueOnce('first');
     expect(forgeData.assign('one')).toBe(true);
     expect(forgeData.assign('two', 'first')).toBe(true);
-    const workerAssignments: Map<string, string> = forgeData.inquireWorkerAssignments();
+    const simAssignments: Map<string, string> = forgeData.inquireSimAssignments();
     const partialGoods: PartialGood[] = forgeData.inquirePartialGoods();
     expect(partialGoods.length).toEqual(1);
-    expect(workerAssignments.get('one')).toEqual('first');
-    expect(workerAssignments.get('two')).toEqual('first');
+    expect(simAssignments.get('one')).toEqual('first');
+    expect(simAssignments.get('two')).toEqual('first');
   });
 
-  it('Adds a group of workers to a specified, valid assignment', () => {
+  it('Adds a group of sims to a specified, valid assignment', () => {
     createUuid.mockReturnValueOnce('first');
     expect(forgeData.assign('one')).toBe(true);
     expect(forgeData.assignGroup(['two', 'three'], 'first')).toBe(true);
-    const workerAssignments: Map<string, string> = forgeData.inquireWorkerAssignments();
+    const simAssignments: Map<string, string> = forgeData.inquireSimAssignments();
     const partialGoods: PartialGood[] = forgeData.inquirePartialGoods();
     expect(partialGoods.length).toEqual(1);
-    expect(workerAssignments.get('one')).toEqual('first');
-    expect(workerAssignments.get('two')).toEqual('first');
-    expect(workerAssignments.get('three')).toEqual('first');
+    expect(simAssignments.get('one')).toEqual('first');
+    expect(simAssignments.get('two')).toEqual('first');
+    expect(simAssignments.get('three')).toEqual('first');
   });
 
-  it('Fails to add a worker to an assignment that doesn\'t exist', () => {
+  it('Fails to add a sim to an assignment that doesn\'t exist', () => {
     expect(forgeData.assign('123abc', '456def')).toBe(false);
     expect(createUuid).not.toHaveBeenCalled();
   });
 
-  it('Fails to add a group of workers to a nonexistent good id', () => {
+  it('Fails to add a group of sims to a nonexistent good id', () => {
     expect(forgeData.assignGroup(['one', 'two'], 'notThereYet')).toBe(false);
     expect(createUuid).not.toHaveBeenCalled();
   });
 
-  it('Removes workers as specified', () => {
+  it('Removes sims as specified', () => {
     createUuid.mockReturnValueOnce('first');
     forgeData.assignGroup(['one', 'two', 'three', 'four']);
-    expect(forgeData.removeWorker('one')).toBe(true);
-    forgeData.removeWorkers('two', 'three');
-    const workerAssignments: Map<string, string> = forgeData.inquireWorkerAssignments();
-    expect(workerAssignments.size).toEqual(1);
-    expect(workerAssignments.has('two')).toBe(false);
-    expect(workerAssignments.has('one')).toBe(false);
-    expect(workerAssignments.get('four')).toEqual('first');
+    expect(forgeData.removeSim('one')).toBe(true);
+    forgeData.removeSims('two', 'three');
+    const simAssignments: Map<string, string> = forgeData.inquireSimAssignments();
+    expect(simAssignments.size).toEqual(1);
+    expect(simAssignments.has('two')).toBe(false);
+    expect(simAssignments.has('one')).toBe(false);
+    expect(simAssignments.get('four')).toEqual('first');
   });
 
-  it('Adds worker input', () => {
+  it('Adds sim input', () => {
     createUuid.mockReturnValueOnce('first');
     forgeData.assign('one');
-    expect(forgeData.addWorkerInput('one', 2)).toBe(true);
+    expect(forgeData.addSimInput('one', 2)).toBe(true);
     const partialGoods: PartialGood[] = forgeData.inquirePartialGoods();
     expect(partialGoods.length).toEqual(1);
     expect(partialGoods[0]).toEqual({
       name: 'wheat',
       id: 'first',
       completedTurns: 0,
-      completedWorkerTurns: 2,
+      completedSimTurns: 2,
     });
   });
 
-  it('Returns false from addWorkerInput if worker is not assigned', () => {
-    expect(forgeData.addWorkerInput('foo', 3)).toBe(false);
+  it('Returns false from addSimInput if sim is not assigned', () => {
+    expect(forgeData.addSimInput('foo', 3)).toBe(false);
     expect(forgeData.inquirePartialGoods().length).toEqual(0);
   });
 
   it('Increments a simple turn', () => {
     createUuid.mockReturnValueOnce('first');
     forgeData.assign('one');
-    forgeData.addWorkerInput('one', 2);
+    forgeData.addSimInput('one', 2);
     forgeData.incrementTurn();
     const partialGoods: PartialGood[] = forgeData.inquirePartialGoods();
     expect(partialGoods.length).toEqual(1);
@@ -138,7 +138,7 @@ describe('ForgeWorkerGoodData Functionality tests', () => {
       name: 'wheat',
       id: 'first',
       completedTurns: 1,
-      completedWorkerTurns: 2,
+      completedSimTurns: 2,
     });
     expect(forgeData.getCompletedUnits()).toEqual(0);
   });
@@ -146,7 +146,7 @@ describe('ForgeWorkerGoodData Functionality tests', () => {
   it('Moves an item from partial to completed', () => {
     createUuid.mockReturnValueOnce('first');
     forgeData.assign('123abc');
-    forgeData.addWorkerInput('123abc', 10);
+    forgeData.addSimInput('123abc', 10);
     // It takes two turns to complete wheat.
     forgeData.incrementTurn();
     forgeData.incrementTurn();
@@ -158,12 +158,12 @@ describe('ForgeWorkerGoodData Functionality tests', () => {
   it('Clones the item as expected', () => {
     createUuid.mockReturnValueOnce('first');
     forgeData.assign('123abc');
-    forgeData.addWorkerInput('123abc', 10);
+    forgeData.addSimInput('123abc', 10);
     // It takes two turns to complete wheat.
     forgeData.incrementTurn();
     forgeData.incrementTurn();
     forgeData.assign('123abc');
-    forgeData.addWorkerInput('123abc', 2);
+    forgeData.addSimInput('123abc', 2);
 
     const extraForgeData = forgeData.clone();
     expect(forgeData).not.toBe(extraForgeData);
@@ -179,22 +179,22 @@ describe('ForgeWorkerGoodData Functionality tests', () => {
     forgeData.assign('two');
     forgeData.assign('three');
     let partialGoods: PartialGood[] = forgeData.inquirePartialGoods();
-    let workerAssignments: Map<string, string> = forgeData.inquireWorkerAssignments();
+    let simAssignments: Map<string, string> = forgeData.inquireSimAssignments();
 
     expect(partialGoods.length).toEqual(3);
-    expect(workerAssignments.get('one')).toEqual('first');
-    expect(workerAssignments.get('two')).toEqual('second');
-    expect(workerAssignments.get('three')).toEqual('third');
+    expect(simAssignments.get('one')).toEqual('first');
+    expect(simAssignments.get('two')).toEqual('second');
+    expect(simAssignments.get('three')).toEqual('third');
 
-    forgeData.addWorkerInput('two', 10);
+    forgeData.addSimInput('two', 10);
     forgeData.incrementTurn();
     forgeData.incrementTurn();
     partialGoods = forgeData.inquirePartialGoods();
-    workerAssignments = forgeData.inquireWorkerAssignments();
+    simAssignments = forgeData.inquireSimAssignments();
 
     expect(partialGoods.length).toEqual(2);
-    expect(workerAssignments.get('one')).toEqual('first');
-    expect(workerAssignments.get('three')).toEqual('third');
-    expect(workerAssignments.has('two')).toBe(false);
+    expect(simAssignments.get('one')).toEqual('first');
+    expect(simAssignments.get('three')).toEqual('third');
+    expect(simAssignments.has('two')).toBe(false);
   });
 });

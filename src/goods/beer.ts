@@ -2,7 +2,7 @@ import { Good, Classification, GoodName } from "./good";
 
 export class Beer implements Good {
   readonly name: GoodName = 'beer';
-  readonly workerTurns: number = 6;
+  readonly simTurns: number = 6;
   readonly absTurns: number = 1;
   readonly baseTraining: number = 4;
   readonly requirements = new Map<GoodName, number>([['wheat', 2]]);
