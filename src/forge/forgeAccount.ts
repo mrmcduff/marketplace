@@ -24,6 +24,7 @@ export class ForgeAccount {
     this.createUuid = createUuid;
     this.goodData = new Map<GoodName, ForgeGoodData>();
     this.sims = [];
+    this.assignments = new Map<string, SimAssignment>();
   }
 
   public addSims(employees: Sim[], assignment?: SimAssignment) {
@@ -53,7 +54,7 @@ export class ForgeAccount {
     toRemove.forEach(removableId => {
       removeIndex = this.sims.findIndex(wrkr => wrkr.id === removableId);
       if (removeIndex >= 0) {
-        [removeSim] = this.sims.splice(removeIndex);
+        [removeSim] = this.sims.splice(removeIndex, 1);
         assignment = this.assignments.get(removeSim.id) || 'none';
         this.assignments.delete(removeSim.id);
         if (assignment !== 'none') {
@@ -72,6 +73,7 @@ export class ForgeAccount {
       }
 
       const forgeGoodData = this.goodData.get(assignment);
+      // Not possible until we start completing and removing items.
       if (!forgeGoodData) {
         return;
       }
@@ -102,12 +104,14 @@ export class ForgeAccount {
         previousGoodData.removeSim(simId);
       }
     }
+    this.assignments.set(simId, 'none');
   }
 
   private addSimToGoodData(simId: string, name: GoodName) {
     let existingData = this.goodData.get(name);
     if (!existingData) {
       existingData = this.createForgeGoodData(name);
+      this.goodData.set(name, existingData);
     }
     existingData.assign(simId);
   }
