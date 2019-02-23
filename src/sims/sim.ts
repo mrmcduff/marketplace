@@ -56,6 +56,8 @@ export class Sim {
    *
    * @param goodName The name of the good to train on
    * @param amount The amount of training turns to add
+   * 
+   * @returns {true} if the certification is added, {false} otherwise
    */
   trainCertification(goodName: GoodName, amount?: number): boolean {
     let totalAmount = 1;
@@ -80,6 +82,8 @@ export class Sim {
    *
    * @param goodName The name of the good certification to decay
    * @param amount The amount to decay the certification
+   * 
+   * @returns {true} if the certification was removed, {false} otherwise.
    */
   decayCertification(goodName: GoodName, amount?: number): boolean {
     if (!this.certifications.has(goodName)) {
@@ -103,6 +107,13 @@ export class Sim {
     return false;
   }
 
+  /**
+   * 
+   * @param good The good to be spared from decay
+   * @param amount The amount to decay all other goods
+   * 
+   * @returns the set of goods whose certifications were removed
+   */
   decayExcept(good: GoodName, amount?: number): Set<GoodName> {
     const lostCertifications = new Set<GoodName>();
     let lostAmount = 1;
