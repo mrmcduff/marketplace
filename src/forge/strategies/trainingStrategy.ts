@@ -5,6 +5,11 @@ export abstract class TrainingStrategy {
   protected decayFactor: number;
   protected trainingFactor: number;
 
+  constructor() {
+    this.decayFactor = 1;
+    this.trainingFactor = 1;
+  }
+
   setDecayFactor(factor: number): void {
     this.decayFactor = factor;
   }

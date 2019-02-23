@@ -94,6 +94,17 @@ export class Sim {
     if (amount && amount > 0) {
       totalAmount = amount;
     }
+
+    // // Remove from partial certifications first.
+    // if (this.partialCertifications.has(goodName)) {
+    //   const partialTraining = this.partialCertifications.get(goodName);
+    //   if (totalAmount > partialTraining) {
+    //     this.partialCertifications.delete(goodName);
+    //   }
+    //   this.partialCertifications.set(goodName, partialTraining - totalAmount);
+    //   return false;
+    // }
+
     if (this.decayingCertifications.has(goodName)) {
       totalAmount += this.decayingCertifications.get(goodName);
     }
