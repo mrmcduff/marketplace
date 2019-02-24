@@ -1,6 +1,7 @@
 import { GoodName } from "../goods";
 import { ForgeGoodData } from "./forgeGoodData";
 import { Sim } from "../sims";
+import { TrainingStrategy, SimEvaluationStrategy } from "./strategies";
 
 export type SimAssignment = GoodName | 'none';
 
@@ -17,14 +18,20 @@ export class ForgeAccount {
   private readonly sims: Sim[];
   private readonly assignments: Map<string, SimAssignment>;
   private createUuid: () => string;
+  private readonly trainingStrategy: TrainingStrategy;
+  private readonly simEvaluationStrategy: SimEvaluationStrategy;
 
   constructor(id: string,
+    trainingStrategy: TrainingStrategy,
+    simEvaluationStrategy: SimEvaluationStrategy,
     createUuid: () => string) {
     this.id = id;
     this.createUuid = createUuid;
     this.goodData = new Map<GoodName, ForgeGoodData>();
     this.sims = [];
     this.assignments = new Map<string, SimAssignment>();
+    this.trainingStrategy = trainingStrategy;
+    this.simEvaluationStrategy = simEvaluationStrategy;
   }
 
   public addSims(employees: Sim[], assignment?: SimAssignment) {
@@ -55,7 +62,7 @@ export class ForgeAccount {
       removeIndex = this.sims.findIndex(wrkr => wrkr.id === removableId);
       if (removeIndex >= 0) {
         [removeSim] = this.sims.splice(removeIndex, 1);
-        assignment = this.assignments.get(removeSim.id) || 'none';
+        assignment = this.assignments.get(removeSim.id);
         this.assignments.delete(removeSim.id);
         if (assignment !== 'none') {
           goodSimData = this.goodData.get(assignment);
@@ -68,19 +75,16 @@ export class ForgeAccount {
   public incrementTurn(): void {
     this.sims.forEach(emp => {
       const assignment = this.assignments.get(emp.id);
-      if (!assignment || assignment === 'none') {
-        return;
+
+      if (assignment !== 'none') {
+        const forgeGoodData = this.goodData.get(assignment);
+        // Note that for now, we are assuming non-null.
+  
+        const addedSimTurns = this.simEvaluationStrategy.evaluateSimTurns(emp, assignment);
+        forgeGoodData.addSimInput(emp.id, addedSimTurns);  
       }
 
-      const forgeGoodData = this.goodData.get(assignment);
-      // Not possible until we start completing and removing items.
-      if (!forgeGoodData) {
-        return;
-      }
-
-      // TODO Need to get a ForgeTurnStrategy & AccountTrainingStrategy here to get the sim output
-      // And also update the sims's training/decay.
-      forgeGoodData.addSimInput(emp.id, 1);
+      this.trainingStrategy.trainAndDecaySim(emp, assignment);
     });
   }
 

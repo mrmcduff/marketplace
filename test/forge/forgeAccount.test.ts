@@ -1,6 +1,7 @@
 import { ForgeAccount } from '../../src/forge/forgeAccount';
 import { Sim } from '../../src/sims/sim';
 import { ForgeGoodData } from '../../src/forge/forgeGoodData';
+import { generateTrainingStrategy, generateSimEvaluationStrategy } from '../../src/forge/strategies';
 
 describe('ForgeAccount tests', () => {
 
@@ -8,7 +9,11 @@ describe('ForgeAccount tests', () => {
   let forgeAccount: ForgeAccount;
   beforeEach(() => {
     createUuid = jest.fn();
-    forgeAccount = new ForgeAccount('foo', createUuid);
+    forgeAccount = new ForgeAccount(
+      'foo',
+      generateTrainingStrategy('always'),
+      generateSimEvaluationStrategy('double'),
+      createUuid);
   });
 
   it('Can add sims', () => {
@@ -18,11 +23,39 @@ describe('ForgeAccount tests', () => {
     expect(forgeAccount.inquireSims()).not.toBe(addedSims);
   });
 
+  it('Can add sims to a specific product', () => {
+    const addedSims = [ new Sim('barSim', 3), new Sim('bazSim', 6) ];
+    forgeAccount.addSims(addedSims, 'beer');
+    expect(forgeAccount.inquireSims()).toEqual(addedSims);
+    expect(forgeAccount.inquireSims()).not.toBe(addedSims);
+    expect(forgeAccount.inquireGoodData('beer')).not.toBeNull();
+  });
+
   it('Can remove sims', () => {
     const addedSims = [ new Sim('barSim', 3), new Sim('bazSim', 6), new Sim('aSim', 1), new Sim('bSim', 2) ];
     forgeAccount.addSims(addedSims);
     forgeAccount.removeSims('barSim', 'bSim');
     expect(forgeAccount.inquireSims()).toEqual([ new Sim('bazSim', 6), new Sim('aSim', 1)]);
+  });
+
+  it('Gracefully handles illegal assignments', () => {
+    forgeAccount.assignSim('not_really_here', 'beer');
+    expect(forgeAccount.inquireGoodData('beer')).toBeNull();
+  });
+
+  it('Gracefully handles removal of a nonexistent sim', () => {
+    forgeAccount.removeSims('not_really_here');
+    // Just don't throw an error.
+    expect(forgeAccount).toBeTruthy();
+  });
+
+  it('Increments the turn appropriately with unassigned sims', () => {
+    const addedSim = [ new Sim('foo', 2) ];
+    forgeAccount.addSims(addedSim);
+    forgeAccount.incrementTurn();
+    expect(forgeAccount.inquireGoodData('beer')).toBeNull();
+    expect(forgeAccount.inquireGoodData('wheat')).toBeNull();
+    expect(forgeAccount.inquireGoodData('dollar')).toBeNull();
   });
 
   it('Assigns sims accurately', () => {
